@@ -1,0 +1,125 @@
+.btn.del_row
+{
+    position:relative;
+    top:-5px;
+}
+.qwe
+{
+    width:350px;
+}
+.place_a
+{
+    
+}
+.phone_a
+{
+    
+    
+    
+}
+.compain_a
+{
+    display:inline-block;
+    vertical-align:top;
+    width:46%;
+}
+.controls .compain_a .like_span
+{
+    width:77%;
+}
+.block_with_delete a
+{
+    display:block;
+   
+    background: url(../img/close.png) no-repeat;
+    height:48px;
+    width:48px;
+    opacity:0.05;
+}
+.block_with_delete
+{
+    display:inline-block;
+    margin-left:8px;
+    vertical-align:top;
+}
+.its_ceil_block
+{
+    padding: 13px 0;
+    margin: 13px 0;
+    border-bottom:1px solid #dadada;
+}
+.its_ceil_block:last-child
+{
+    border-bottom:none;
+}
+
+.controls .compain_a.left .like_span
+{
+    width:390px;
+}
+.row_street_foursquare .left
+{
+    width:40%;
+    
+}
+.row_street_foursquare .right
+{
+    width:55%;
+    
+}
+.row_obj
+{
+    display: inline-block;
+    vertical-align: top;
+}
+.got_foursqaure li
+{
+    margin: 15px 0;
+}
+.controls .compain_a.left .input-prepend input.like_span.set_street 
+{
+    width:362px;
+}
+.compain_a .input-prepend
+{
+    width:390px;
+}
+table.import
+{
+    width: 100%;
+}
+.import thead tr
+{
+    background: #52B3D9;
+}
+.exist
+{
+    background: #FDE3A7;
+}
+.havnt
+{
+    background: #2ECC71;
+}
+.remove
+{
+    background: #E74C3C;
+}
+.havnt_but_in_db
+{
+    background: #F9BF3B;
+}
+.import tbody tr td.blocked
+{
+    background: #E74C3C;
+}
+.helper_import
+{
+    width: 800px;
+    margin:auto;
+}
+.helper_import ul .squrle
+{
+    display: inline-block;
+    width: 30px;
+    height: 15px;
+}
