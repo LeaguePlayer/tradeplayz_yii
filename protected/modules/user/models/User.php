@@ -38,7 +38,7 @@ class User extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return Yii::app()->getModule('user')->tableUsers;
+		return 'tbl_users';
 	}
 
 	/**

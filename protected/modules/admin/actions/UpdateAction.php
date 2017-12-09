@@ -6,6 +6,9 @@ class UpdateAction extends AdminAction
     {
         $model = $this->getModel();
 
+        if(isset($_POST['ContentLang']))
+            $model->contentLangs = $_POST['ContentLang'];
+
         if (isset($_POST[$this->modelName]['deletePhoto'])) {
             $behaviorName = 'imgBehavior'.ucfirst( $_POST[$this->modelName]['deletePhoto'] );
             $model->{$behaviorName}->deletePhoto();

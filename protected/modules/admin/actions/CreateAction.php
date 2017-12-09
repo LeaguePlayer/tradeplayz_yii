@@ -5,6 +5,10 @@ class CreateAction extends AdminAction
     public function run()
     {
         $model = $this->getModel();
+
+        // var_dump($_POST['ContentLang']);die('ww');
+        if(isset($_POST['ContentLang']))
+            $model->contentLangs = $_POST['ContentLang'];
         
         if(isset($_POST[$this->modelName]))
         {

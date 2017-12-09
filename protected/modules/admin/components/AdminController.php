@@ -55,7 +55,7 @@ class AdminController extends Controller
     {
         parent::init();
 
-        $this->actualUnholdersCard = Usersholderscard::model()->count("id_card is null");
+        // $this->actualUnholdersCard = Usersholderscard::model()->count("id_card is null");
 
         return true;
     }

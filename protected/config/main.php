@@ -72,9 +72,9 @@ return array_replace_recursive(
             'authManager' => array(
                 'class' => 'CDbAuthManager',// 'auth.components.CachedDbAuthManager',
                 //'cachingDuration' => 0,
-                'itemTable' => '{{authitem}}',
+                'itemTable' => 'tbl_authitem',
                 'itemChildTable' => '{{authitemchild}}',
-                'assignmentTable' => '{{authassignment}}',
+                'assignmentTable' => 'tbl_authassignment',
                 'behaviors' => array(
                     'auth' => array(
                         'class' => 'auth.components.AuthBehavior',
@@ -101,7 +101,7 @@ return array_replace_recursive(
                 'urlFormat'=>'path',
                 'rules'=>array(
                     'gii'=>'gii',
-                    // 'admin'=>'admin/structure',
+                    'admin'=>'admin/structure',
                     // 'api/page/<alias>'=>'api/page',
                     // 'admin/<controller:!config>' => 'admin/<controller>/list',
                     // '/'=>'site/index',

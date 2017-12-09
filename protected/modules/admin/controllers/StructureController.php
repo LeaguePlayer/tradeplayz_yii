@@ -7,7 +7,7 @@ class StructureController extends AdminController
 
 	public function actionList($opened = false)
 	{
-        $this->redirect('/admin/shops');
+        $this->redirect('/admin/tournaments');
 
 		$openNode = Structure::model()->findByPk($opened);
 //		var_dump( $openNode ); die();

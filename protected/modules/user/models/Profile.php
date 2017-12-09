@@ -27,7 +27,7 @@ class Profile extends UActiveRecord
 	 */
 	public function tableName()
 	{
-		return Yii::app()->getModule('user')->tableProfiles;
+		return "tbl_profiles";
 	}
 
 	/**

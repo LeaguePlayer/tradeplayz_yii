@@ -16,6 +16,9 @@ class EActiveRecord extends CActiveRecord
     public $update_time;
     public $status;
 
+    public $places = null;
+    public $contentLangs = null;
+
     // Статусы в базе данных
     const STATUS_CLOSED = 0;
     const STATUS_PUBLISH = 1;
@@ -201,5 +204,57 @@ class EActiveRecord extends CActiveRecord
     {
         if ( !empty($this->update_time) )
             return SiteHelper::russianDate($this->update_time).' в '.date('H:i', $this->update_time);
+    }
+
+    public function getContentModel( $place )
+    {
+
+        if(is_object($this->getActiveRelation($place)))
+        { 
+            // var_dump($place);die();
+            if(is_null($this->$place)) //  модель не создана
+            {
+                $contentLang = new ContentLang;
+                $contentLang->model_name = get_class($this);
+                $contentLang->id_place = $place;
+                $contentLang->post_id = $this->id;
+                $contentLang->id_lang = Yii::app()->language;
+                $contentLang->save();
+                
+                return $contentLang;
+            }
+            else
+                return $this->$place;
+        }
+    }
+
+    public function afterSave()
+    {
+       // var_dump($this->contentLangs);die('ds');
+            
+        // SiteHelper::mpr($this->relations());
+
+            if(!is_null($this->contentLangs))
+            {
+                $model_name = get_class($this);
+                foreach($this->contentLangs as $place => $content)
+                {
+                    $contentModel = $this->getContentModel( $place );
+
+                    $contentModel->wswg_body = $content;
+                    // var_dump($contentModel->wswg_body);die('x');
+                    $result = $contentModel->save();
+
+                    // var_dump($contentModel->getErrors());
+                    // die();
+                }
+            }
+
+        
+        // die('s2');
+
+
+
+        return parent::afterSave();
     }
 }

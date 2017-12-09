@@ -13,15 +13,15 @@ class DConfig extends CApplicationComponent
 
     public function init()
     {
-        // $db = $this->getDbConnection();
+        $db = $this->getDbConnection();
 
-        // $items = $db->createCommand('SELECT * FROM {{config}}')->queryAll();
+        $items = $db->createCommand('SELECT * FROM tbl_config')->queryAll();
 
-        // foreach ($items as $item)
-        // {
-        //     if ($item['param'])
-        //         $this->data[$item['param']] = $item['value'] === '' ?  $item['default'] : $item['value'];
-        // }
+        foreach ($items as $item)
+        {
+            if ($item['param'])
+                $this->data[$item['param']] = $item['value'] === '' ?  $item['default'] : $item['value'];
+        }
 
         parent::init();
     }

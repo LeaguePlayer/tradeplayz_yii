@@ -9,7 +9,7 @@ class Config extends CActiveRecord
 
     public function tableName()
     {
-        return '{{config}}';
+        return 'tbl_config';
     }
 
     public function rules()
