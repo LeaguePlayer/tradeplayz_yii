@@ -4,6 +4,8 @@ class TournamentsController extends ApiController
 {
 	public function actionIndex()
 	{
+
+
 		//params
 		$interval_start = date("Y-m-d H:i",strtotime("-1 day"));
 		$interval_finish = date("Y-m-d H:i");
@@ -11,6 +13,15 @@ class TournamentsController extends ApiController
 		// init
 		$json = new JsonModel;
 		$result = array();
+
+
+		// check registred any tour
+		if(is_object($this->user->active_participant)) // user already registred to tour
+		{
+			$json->registerResponseObject('allow', false);
+			$json->returnJson();
+			return false;
+		}
 
 		//criteria
 		$criteria = new CDbCriteria;
@@ -69,9 +80,11 @@ class TournamentsController extends ApiController
 		$criteria->addInCondition('status', Tournaments::ALLOWED_STATUSES);
 		$criteria->addCondition("id = :id");
 		$criteria->params[":id"] =  $id_tour;
+		$criteria->params[":model_name"] =  "Tournaments";
+		$criteria->params[":id_lang"] =  Yii::app()->language;
 		$status_participants_still_play = Participants::STATUS_STILL_PLAY;
 
-		$criteria->select = "t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play";
+		$criteria->select = "t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play, (SELECT wswg_body FROM content_lang cl WHERE cl.post_id = :id and cl.id_place = 'rules' and cl.model_name = :model_name and id_lang = :id_lang LIMIT 1) as rules";
 
 		
 		//request
@@ -80,8 +93,16 @@ class TournamentsController extends ApiController
 									   ->where($criteria->condition, $criteria->params)
 									   ->order($criteria->order)
 									   ->queryRow();
+
+// 									   $query=str_replace(
+//    array_keys($tour->params),
+//    array_values($tour->params),
+//    $tour->getText()
+// );
+									   // var_dump($tour->getText());
+									   // die();
 		// form data
-		
+		// var_dump($tour);die();
 		// $countRegistredPlayers = Tournaments::getCountRegistredPlayers( $tour['id'] );
 		$allRegistredPlayers = Tournaments::getAllRegistredPlayersByTourId( $tour['id'], $limit = 5 );
 		$allPrizes = Tournaments::getAllPrizes( $allRegistredPlayers, $tour['prize_places'] , $limit = 5 );
@@ -95,6 +116,7 @@ class TournamentsController extends ApiController
 				'date_begin'=>date("H:i d.m.Y",strtotime($tour['dttm_begin'])),
 				'status'=>Tournaments::getStatusAliases( $tour['status'] ),
 				'prize_places'=>$tour['prize_places'], // надо переопределить участники * на этот процент
+				'rules'=>$tour['rules'],
 				'participants'=>$allRegistredPlayers,
 				'prizes'=>$allPrizes,
 				'count_participants'=>array(

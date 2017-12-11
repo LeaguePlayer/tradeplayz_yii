@@ -18,7 +18,7 @@
 class Tournaments extends EActiveRecord
 {
     public $places = array(
-            "Правила"=>'rulezzz',
+            "Правила"=>'rules',
         );
 
 

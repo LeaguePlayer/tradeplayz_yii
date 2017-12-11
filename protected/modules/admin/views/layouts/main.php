@@ -37,8 +37,17 @@
                // array('label'=>'Галереи', 'url'=>array('/admin/gallery/manage')),
             );
         ?>
-        <?php
+         <?php
             $userlogin = Yii::app()->user->name ? Yii::app()->user->name : Yii::app()->user->email;
+
+            $langs_avail = array();
+            $select_lang = null;
+            foreach($this->ALLOWED_COUNTRIES as $lang)
+                {
+                    if($lang == Yii::app()->language) $select_lang = Controller::languageTranslate($lang);
+                    $langs_avail[] = array('label'=>Controller::languageTranslate($lang), 'url'=>array('/admin/config/changeLang', 'lang'=>$lang));
+                }
+
             $this->widget('bootstrap.widgets.TbNavbar', array(
                 'color'=>'inverse', // null or 'inverse'
                 'brandLabel'=> CHtml::encode(Yii::app()->name),
@@ -53,6 +62,7 @@
                         'class'=>'bootstrap.widgets.TbNav',
                         'htmlOptions'=>array('class'=>'pull-right'),
                         'items'=>array(
+                            array('label'=>'Выбран '.$select_lang, 'url'=>array('/admin/orders'), 'items'=>$langs_avail),
                             array('label'=>'Выйти ('.$userlogin.')', 'url'=>'/user/logout'),
                         ),
                     ),

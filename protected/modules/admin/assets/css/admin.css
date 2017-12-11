@@ -173,3 +173,20 @@ span.offset {
   font-weight: bold;
   color: #D91E18;
 }
+.alert_lang.unfill
+{
+  background: #EC644B;
+}
+.alert_lang.fill
+{
+  background: #2ECC71;
+}
+.alert_lang
+{
+   border-radius: 30px;
+   
+   padding: 2px 4px;
+   font-size: 9px;
+   color:#000;
+   margin: 4px;
+}

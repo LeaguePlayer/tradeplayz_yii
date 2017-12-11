@@ -24,7 +24,7 @@
 
 
 	<?
-		$place = "rulezzz";
+		$place = "rules";
 		$name_place = "Правила";
 	?>
 		<div class='control-group'>

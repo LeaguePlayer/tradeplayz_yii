@@ -5,6 +5,17 @@
  */
 class Controller extends CController
 {
+    public $ALLOWED_COUNTRIES = array('ru','en');
+
+    public static function languageTranslate( $lang )
+    {
+        $langs = array(
+                'ru'=>'Русский язык',
+                'en'=>'Английский язык',
+            );
+
+        return $langs[$lang];
+    }
     /**
      * @var string page name.
      */
@@ -42,7 +53,103 @@ class Controller extends CController
         $this->cs = Yii::app()->clientScript;
         $this->cs->registerCoreScript('jquery');
         if(Yii::app()->getRequest()->getParam('update_assets')) $this->forceCopyAssets = true;
+
+
+
+        // work with lang
+        if (!empty($_GET['language']))
+        {
+            if(!in_array($_GET['language'], $this->ALLOWED_COUNTRIES))
+                throw new CHttpException(404, 'No found!');
+
+            Yii::app()->language = $_GET['language'];
+            Yii::app()->request->cookies['country'] = new CHttpCookie('country', Yii::app()->language );
+        }
+        else
+        {
+            $request_uri = $_SERVER['REQUEST_URI'];
+            if(!empty(Yii::app()->request->cookies['country']->value))
+                $country = Yii::app()->language = Yii::app()->request->cookies['country']->value;
+            else
+            {
+                function getLocationInfoByIp(){
+                    $client  = @$_SERVER['HTTP_CLIENT_IP'];
+                    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+                    $remote  = @$_SERVER['REMOTE_ADDR'];
+                    $result  = array('country'=>'', 'city'=>'');
+                    if(filter_var($client, FILTER_VALIDATE_IP)){
+                        $ip = $client;
+                    }elseif(filter_var($forward, FILTER_VALIDATE_IP)){
+                        $ip = $forward;
+                    }else{
+                        $ip = $remote;
+                    }
+                    // echo $ip;die();
+                    $ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$ip));    
+                    // var_dump($ip_data);die();
+                    if($ip_data && $ip_data->geoplugin_countryName != null){
+                        $result['country'] = $ip_data->geoplugin_countryCode;
+                        $result['city'] = $ip_data->geoplugin_city;
+                    }
+                    return $result;
+                }
+
+
+
+
+                $country = strtolower(getLocationInfoByIp()['country']);
+               
+                
+
+                if(!in_array($country, $this->ALLOWED_COUNTRIES))
+                {
+                    $country = 'en';
+                    $request_uri = '';
+                }
+
+                Yii::app()->request->cookies['country'] = new CHttpCookie('country', $country);
+            }
+
+            // die();
+
+            // function strpos_array($haystack, $needles) {
+                    
+            //         if ( is_array($needles) ) {
+            //             foreach ($needles as $str) {
+            //                 if ( is_array($str) ) {
+            //                     $pos = strpos_array($haystack, $str);
+            //                 } else {
+            //                     $pos = strpos($haystack, $str);
+            //                 }
+            //                 if ($pos !== FALSE) {
+            //                     return $pos;
+            //                 }
+            //             }
+            //         } else {
+            //             return strpos($haystack, $needles);
+            //         }
+            //     }
+            
+            // $exceptions = strpos_array($request_uri, array('sort', 'delete', 'login','user', 'gii', 'gallery', 'TranslatePhpMessage'));
+
+            // if (is_null($exceptions)) {
+
+            //     $pos = strpos($request_uri, $country);
+            //     if ($pos === false) {
+            //         // die('dsds');
+            //        $this->redirect("/{$country}{$request_uri}");
+            //     }
+
+            // }
+                // echo $request_uri;die();
+                // $this->redirect("{$request_uri}");
+            // }
+            
+        }
     }
+
+
+
 
     //Get Clip
     public function getClip($name){

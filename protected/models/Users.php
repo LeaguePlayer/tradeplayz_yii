@@ -68,6 +68,9 @@ class Users extends EActiveRecord
             // 'profiles' => array(self::HAS_ONE, 'Profiles', 'user_id'),
             'provider' => array(self::HAS_ONE, 'UsersProvider', 'id_user'),
             'device' => array(self::HAS_ONE, 'UserDevices', 'id_user'),
+            'active_participant' => array(self::HAS_ONE, 'Participants', 'id_client', "condition"=>"status = :status","params"=>array(
+                    ':status'=>Participants::STATUS_STILL_PLAY,
+                )),
         );
     }
 

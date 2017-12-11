@@ -7,37 +7,28 @@ $this->menu=array(
 <h1>Управление <?php echo $model->translition(); ?></h1>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'tournaments-grid',
+	'id'=>'faq-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'type'=>TbHtml::GRID_TYPE_HOVER,
-    'afterAjaxUpdate'=>"function() {sortGrid('tournaments')}",
+    'afterAjaxUpdate'=>"function() {sortGrid('faq')}",
     'rowHtmlOptionsExpression'=>'array(
         "id"=>"items[]_".$data->id,
         "class"=>"status_".(isset($data->status) ? $data->status : ""),
     )',
 	'columns'=>array(
-		'id',
-		array(
-			'name'=>'dttm_begin',
-			'type'=>'raw',
-			'value'=>'SiteHelper::russianDate($data->dttm_begin)'
-		),
 		array(
 			'name'=>'status',
 			'type'=>'raw',
-			'value'=>'Tournaments::getStatusAliases($data->status)',
-			'filter'=>Tournaments::getStatusAliases()
+			'value'=>'Faq::getStatusAliases($data->status)',
+			'filter'=>Faq::getStatusAliases()
 		),
-		'prize_places',
-		'byuin',
-		'id_format',
-		'id_currency',
-		'prize_pool',
 		array(
-			'name'=>'dttm_finish',
-			'type'=>'raw',
-			'value'=>'SiteHelper::russianDate($data->dttm_finish)'
+			'header'=>"Заголовок",
+			'type'=>"html",
+			'value'=>function($m){
+				return $m->title->wswg_body;
+			},
 		),
 		array(
 			'header'=>"Языки",
@@ -64,11 +55,10 @@ $this->menu=array(
 				return $string;
 			},
 		),
-		'begin_stack',
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 		),
 	),
 )); ?>
 
-<?php if($model->hasAttribute('sort')) Yii::app()->clientScript->registerScript('sortGrid', 'sortGrid("tournaments");', CClientScript::POS_END) ;?>
+<?php if($model->hasAttribute('sort')) Yii::app()->clientScript->registerScript('sortGrid', 'sortGrid("faq");', CClientScript::POS_END) ;?>
