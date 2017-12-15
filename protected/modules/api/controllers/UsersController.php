@@ -14,9 +14,10 @@ class UsersController extends ApiController
 				"balance"=>$this->user->balance,
 				"login"=>$this->user->login,
 				"rating"=>$this->user->rating,
-				"address"=>$this->user->address,
-				"zipcode"=>$this->user->zipcode,
-				"email"=>$this->user->email,
+				"address"=>(is_null($this->user->address)) ? Yii::t('main','not_indicated') : $this->user->address,
+				"zipcode"=>(is_null($this->user->zipcode)) ? Yii::t('main','not_indicated') : $this->user->zipcode,
+				"email"=>(is_null($this->user->email)) ? Yii::t('main','not_indicated') : $this->user->email,
+				"phone"=>(is_null($this->user->phone)) ? Yii::t('main','not_indicated') : $this->user->phone,
 				"currency"=>$this->user->currency,
 			);
 		

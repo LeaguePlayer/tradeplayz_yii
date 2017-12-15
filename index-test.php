@@ -1,19 +1,4 @@
 <?php
 
-
-// phpinfo();die();
-/**
- * This is the bootstrap file for test application.
- * This file should be removed when the application is deployed for production.
- */
-
-// change the following paths if necessary
-$yii=dirname(__FILE__).'/../../frameworks/yii/framework/yii.php';
-$config=dirname(__FILE__).'/protected/config/test.php';
-
-// remove the following line when in production mode
-defined('YII_DEBUG') or define('YII_DEBUG',true);
-
-require_once($yii);
-Yii::createWebApplication($config)->run();
-
+for($x = 1; $x <= 365*27; $x++)
+	echo "X";

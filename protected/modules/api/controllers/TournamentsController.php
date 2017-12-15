@@ -18,7 +18,8 @@ class TournamentsController extends ApiController
 		// check registred any tour
 		if(is_object($this->user->active_participant)) // user already registred to tour
 		{
-			$json->registerResponseObject('allow', false);
+			$json->registerResponseObject('redirect', true);
+			$json->registerResponseObject('id_tour', $this->user->active_participant->id_tournament);
 			$json->returnJson();
 			return false;
 		}
@@ -53,10 +54,11 @@ class TournamentsController extends ApiController
 
 			$result[] = array(
 					'id'=>$tour['id'],
+					'byuin'=>$tour['byuin'],
 					'date_begin'=>date("H:i",strtotime($tour['dttm_begin'])),
 					'prize_pool'=>number_format($tour['prize_pool'], 0, ',', ' ')." TPZ",
-					'prize_places'=>$tour['prize_places'], // надо переопределить участники * на этот процент
-					'registred_players'=>$getAllPlayersByTour,
+					// 'prize_places'=>$tour['prize_places'], // надо переопределить участники * на этот процент
+					'registred_players'=>number_format($getAllPlayersByTour, 0, ',', ' '),
 				);
 		}
 
@@ -77,19 +79,19 @@ class TournamentsController extends ApiController
 		$criteria = new CDbCriteria;
 		
 
-		$criteria->addInCondition('status', Tournaments::ALLOWED_STATUSES);
-		$criteria->addCondition("id = :id");
+		$criteria->addInCondition('t.status', Tournaments::ALLOWED_STATUSES);
+		$criteria->addCondition("t.id = :id");
 		$criteria->params[":id"] =  $id_tour;
 		$criteria->params[":model_name"] =  "Tournaments";
 		$criteria->params[":id_lang"] =  Yii::app()->language;
 		$status_participants_still_play = Participants::STATUS_STILL_PLAY;
 
-		$criteria->select = "t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play, (SELECT wswg_body FROM content_lang cl WHERE cl.post_id = :id and cl.id_place = 'rules' and cl.model_name = :model_name and id_lang = :id_lang LIMIT 1) as rules";
+		$criteria->select = "(CASE part.id_client WHEN {$this->user->id} THEN 1 ELSE 0 END) as you_registred, t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play, (SELECT wswg_body FROM content_lang cl WHERE cl.post_id = :id and cl.id_place = 'rules' and cl.model_name = :model_name and id_lang = :id_lang LIMIT 1) as rules";
 
 		
 		//request
 		$tour = Yii::app()->db->createCommand()->select( $criteria->select )
-									   ->from(Tournaments::model()->tableName()." as t")
+									   ->from(Tournaments::model()->tableName()." as t left join participants part on (part.id_tournament = t.id and id_client = {$this->user->id})")
 									   ->where($criteria->condition, $criteria->params)
 									   ->order($criteria->order)
 									   ->queryRow();
@@ -110,12 +112,13 @@ class TournamentsController extends ApiController
 		$currency_play = Currency::getTournamentAllowedCurrencies( $tour['id_currency'] );
 		$format_play = Tournaments::getFormats( $tour['id_format'] );
 
-		$result[] = array(
+		$result = array(
 				'id'=>$tour['id'],
+				'you_registred'=>$tour['you_registred'],
 				'name'=>"{$tour['byuin']} TPZ / {$currency_play} / {$format_play}",
 				'date_begin'=>date("H:i d.m.Y",strtotime($tour['dttm_begin'])),
 				'status'=>Tournaments::getStatusAliases( $tour['status'] ),
-				'prize_places'=>$tour['prize_places'], // надо переопределить участники * на этот процент
+				'prize_places'=>number_format($tour['prize_places'], 0, ',', ' '), // надо переопределить участники * на этот процент
 				'rules'=>$tour['rules'],
 				'participants'=>$allRegistredPlayers,
 				'prizes'=>$allPrizes,

@@ -193,29 +193,44 @@ class Tournaments extends EActiveRecord
     public static function getAllPrizes( $all_players_in_tour, $percent_in_the_money, $limit = false )
     {
         // запилить механику распределяющую
+        $result = array();
 
+        $result[] = array(
+                'row_number'=>'1',
+                'prize'=>'54 TPZ',
+            );
+        $result[] = array(
+                'row_number'=>'2',
+                'prize'=>'34 TPZ',
+            );
+        $result[] = array(
+                'row_number'=>'3',
+                'prize'=>'24 TPZ',
+            );
+        $result[] = array(
+                'row_number'=>'4',
+                'prize'=>'14 TPZ',
+            );
+        $result[] = array(
+                'row_number'=>'5',
+                'prize'=>'4 TPZ',
+            );
 
-        return array(
-                1=>"54 TPZ",
-                2=>"34 TPZ",
-                3=>"24 TPZ",
-                4=>"14 TPZ",
-                5=>"4 TPZ",
-            );  
+        
+        return $result;
     }
 
 
 
     public function getAllRegistredPlayersByTourId( $id_tour, $limit = false )
     {
-        $status_word_still_play = Participants::getStatusAliases( Participants::STATUS_STILL_PLAY );
-        $status_word_finished = Participants::getStatusAliases( Participants::STATUS_FINISHED );
+        $id_auth_user = Yii::app()->controller->user->id;
 
         $criteria = new CDbCriteria;
         $criteria->addCondition("id_tournament = :id_tournament");
         $criteria->params[":id_tournament"] = $id_tour;
         $criteria->order = "place ASC";
-        $criteria->select = "row_number() OVER (), (CASE p.status WHEN 0 THEN '{$status_word_still_play}' WHEN 1 THEN '{$status_word_finished}' END) as status, (SELECT concat(lastname, ' ', firstname) as fullname  FROM Users u WHERE u.id = p.id_client)";
+        $criteria->select = "row_number() OVER (), p.status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, (SELECT concat(lastname, ' ', firstname) as fullname  FROM Users u WHERE u.id = p.id_client)";
         if(is_numeric($limit))
             $criteria->limit = $limit;
 

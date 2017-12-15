@@ -53,7 +53,7 @@ class Users extends EActiveRecord
         return array(
             // array('id', 'required'),
             array('id, status, rating, currency', 'numerical', 'integerOnly'=>true),
-            array('firstname, lastname, img_avatar, login, password, address, email', 'length', 'max'=>255),
+            array('firstname, lastname, img_avatar, login, password, address, email, phone', 'length', 'max'=>255),
             array('balance', 'length', 'max'=>8),
             array('zipcode', 'length', 'max'=>25),
             // The following rule is used by search().
@@ -101,6 +101,7 @@ class Users extends EActiveRecord
             'password' => 'Password',
             'rating' => 'Rating',
             'address' => 'Address',
+            'phone' => 'Phone',
             'zipcode' => 'Zipcode',
             'email' => 'Email',
             'currency' => 'Currency',
@@ -135,7 +136,8 @@ class Users extends EActiveRecord
 		$criteria->compare('img_avatar',$this->img_avatar,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('balance',$this->balance,true);
-		$criteria->compare('login',$this->login,true);
+        $criteria->compare('login',$this->login,true);
+		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('rating',$this->rating);
 		$criteria->compare('address',$this->address,true);

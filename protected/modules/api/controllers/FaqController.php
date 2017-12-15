@@ -24,8 +24,14 @@ class FaqController extends ApiController
 			$criteria->select = "faq.id, cl_title.wswg_body as title, cl_desc.wswg_body as description";
 
 
-		if($query)
-			$criteria->addSearchCondition('cl_title.wswg_body', $query,true,'AND');
+		if($query && !empty($query))
+			{
+				$query = addcslashes(mb_strtolower($query), '%_'); // escape LIKE's special characters
+
+				$criteria->addCondition(" ( LOWER(cl_title.wswg_body) like :query OR LOWER(cl_desc.wswg_body) like :query ) ");
+				$criteria->params[":query"] =  "%$query%";
+			}
+
 		
 		
 
