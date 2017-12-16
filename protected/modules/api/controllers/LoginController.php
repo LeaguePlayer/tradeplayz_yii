@@ -204,7 +204,9 @@ class LoginController extends ApiController
 // return true;
 
 		// var_dump($user['login']);die();
-		if(empty($user['login']) || empty($user['password']))
+		
+
+		if(empty($user['login']) || empty($user['password']) || trim($user['password'])=="" || trim($user['login'])=="" || !isset($user['login']) || !isset($user['password']))
 		{
 			$json->error_text=Yii::t('main','fill_fields');
 			$json->returnError(JsonModel::CUSTOM_ERROR);
@@ -212,6 +214,13 @@ class LoginController extends ApiController
 		}
 		else
 			$user['login'] = strtolower($user['login']);
+
+		if(!filter_var($user['login'], FILTER_VALIDATE_EMAIL)) // валидируем емейл / логин
+		{
+			$json->error_text=Yii::t('main','email_incorrect');
+			$json->returnError(JsonModel::CUSTOM_ERROR);
+			return true;
+		}
 
 		if(empty($user) || empty($user_device))
 		{

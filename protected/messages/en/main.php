@@ -24,4 +24,5 @@
         "not_indicated" => 'Not indicated', 
         "already_registred" => 'You already registred', 
         "participant_not_registred" => 'You not registred in tournament', 
+        "email_incorrect" => 'Your email is not correct', 
 	);

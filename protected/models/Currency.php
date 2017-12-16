@@ -25,6 +25,12 @@ class Currency
         return $aliases;
     }
 
+    public static function existCurrencyById($id)
+    {
+        $data = self::getCurrencies();
+        return (is_null($data[$id])) ? false : true;
+    }
+
      public static function getTournamentAllowedCurrencies($currency = -1)
     {
         $allowed = array(
