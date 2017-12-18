@@ -262,7 +262,7 @@ const TIME_SILINCE = 10; // in seconds
                     if($finish_level)
                     {
                         $got_prize = Tournaments::getTempPrizes(1);
-                        $SQL="UPDATE participants SET level = {$next_level}, place = 1, prize = {$got_prize}, balance = '{$tour[begin_stack]}' WHERE id = '{$id_participant_winner}'  RETURNING id_client";
+                        $SQL="UPDATE participants SET level = {$next_level}, status = 1, place = 1, prize = {$got_prize}, balance = '{$tour[begin_stack]}' WHERE id = '{$id_participant_winner}'  RETURNING id_client";
                         $id_client_user = $connection->createCommand($SQL)->queryRow()['id_client'];
 
                         if($got_prize > 0)
