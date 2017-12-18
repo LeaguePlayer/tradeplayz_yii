@@ -49,6 +49,12 @@ class Tournaments extends EActiveRecord
         );
 
     const ALLOWED_FOR_BET = array(
+            // Tournaments::STATUS_PUBLISH,
+            // Tournaments::STATUS_PREPARATION,
+            Tournaments::STATUS_RUNNING,
+        );
+
+    const ALLOWED_FOR_REDIRECT = array(
             Tournaments::STATUS_PUBLISH,
             Tournaments::STATUS_PREPARATION,
             Tournaments::STATUS_RUNNING,

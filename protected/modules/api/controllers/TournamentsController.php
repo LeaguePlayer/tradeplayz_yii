@@ -18,10 +18,18 @@ class TournamentsController extends ApiController
 		// check registred any tour
 		if(is_object($this->user->active_participant)) // user already registred to tour
 		{
-			$json->registerResponseObject('redirect', true);
-			$json->registerResponseObject('id_tour', $this->user->active_participant->id_tournament);
-			$json->returnJson();
-			return false;
+			$allowed_status_tour_for_redirect = Tournaments::ALLOWED_FOR_REDIRECT;
+
+			if(in_array($this->user->active_participant->tournament->status, $allowed_status_tour_for_redirect)) // игрок участвует в турнире
+			{
+				$json->registerResponseObject('redirect', true);
+				$json->registerResponseObject('id_tour', $this->user->active_participant->id_tournament);
+				$json->returnJson();
+				return false;
+			}
+			
+
+			
 		}
 
 		//criteria
