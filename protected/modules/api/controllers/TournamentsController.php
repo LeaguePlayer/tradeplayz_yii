@@ -364,7 +364,7 @@ class TournamentsController extends ApiController
 						$new_participants->id_client = $this->user->id;
 						$new_participants->id_tournament = $tournament_model->id;
 						$new_participants->balance = $tournament_model->begin_stack;
-						$new_participants->place = Tournaments::getAllPlayersByTourId( $tournament_model->id )+1;
+						$new_participants->place = null;
 						if($new_participants->save()) // user registred
 							$result["registration"] = true;
 						else
