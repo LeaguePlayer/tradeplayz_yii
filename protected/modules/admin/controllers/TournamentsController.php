@@ -26,7 +26,7 @@ class TournamentsController extends AdminController
 			$step = 'silince running';
 		elseif($tour->paused == 2)
 			$step = 'break running';
-		else
+		elseif($tour->status == Tournaments::STATUS_RUNNING)
 			$step = 'level running';
 
 		$tourdata = "<div class='tour'>Tour: {$tour->id} / Status: {$status} / Level: {$tour->level} / STAGE: {$step}</div>";
