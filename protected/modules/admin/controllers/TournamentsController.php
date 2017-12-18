@@ -20,7 +20,16 @@ class TournamentsController extends AdminController
 
 		$tour = Tournaments::model()->findByPk($id_tour);
 		$status = Tournaments::getStatusAliases($tour->status);
-		$tourdata = "<div class='tour'>Tour: {$tour->id} / Status: {$status} / Level: {$tour->level}</div>";
+
+		$step = "";
+		if($tour->paused == 1)
+			$step = 'silince running';
+		elseif($tour->paused == 2)
+			$step = 'break running';
+		else
+			$step = 'level running';
+
+		$tourdata = "<div class='tour'>Tour: {$tour->id} / Status: {$status} / Level: {$tour->level} / STAGE: {$step}</div>";
 
 		$graphs = Graph::model()->findAll($graphCriteria);
 		$graph_array = "<table class='tbl'>";
