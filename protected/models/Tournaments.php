@@ -220,17 +220,22 @@ class Tournaments extends EActiveRecord
         
         $result = array();
 
-
-        $max = 50;
-
-        for($i = 1; $i <= $max; $i++)
-        {
-            $prize = $max * 10 - $i*9;
+        foreach(self::getTempPrizes() as $i => $prize)
             $result[] = array(
-                'row_number'=>(string)$i,
-                'prize'=>trim("{$prize} {$prefix}"),
-            );
-        }
+                    'row_number'=>(string)$i,
+                    'prize'=>trim("{$prize} {$prefix}"),
+                );
+
+        // $max = 50;
+
+        // for($i = 1; $i <= $max; $i++)
+        // {
+        //     $prize = $max * 10 - $i*9;
+        //     $result[] = array(
+        //         'row_number'=>(string)$i,
+        //         'prize'=>trim("{$prize} {$prefix}"),
+        //     );
+        // }
 
 
         if( is_numeric($limit) && $limit <= count($result) )
@@ -283,9 +288,9 @@ class Tournaments extends EActiveRecord
             $criteriaQuery->addCondition("LOWER(concat(lastname, ' ', firstname)) LIKE " .  Yii::app()->db->quoteValue('%' . mb_strtolower($query) . '%') );
             $criteriaQuery->addCondition("id_tournament = :id_tournament");
             $criteriaQuery->params[":id_tournament"] = $id_tour;
-            $criteriaQuery->order = "place ASC";
+            // $criteriaQuery->order = "place ASC NULLS LAST";
             $idsExist = array();
-            $filteredData = Yii::app()->db->createCommand()->select( "p.id" )
+            $filteredData = Yii::app()->db->createCommand()->select( "p.id, place" )
                                        ->from(Participants::model()->tableName(). " as p left join users u on (u.id = p.id_client)")
                                        ->where($criteriaQuery->condition, $criteriaQuery->params)
                                        ->order($criteriaQuery->order)
@@ -299,9 +304,9 @@ class Tournaments extends EActiveRecord
             // $criteria->addInCondition('p.id', $idsExist);
         }
 
-        
+        $word = Yii::t('main','status_participant_still_play');
+        $criteria->select = "(CASE when place is null THEN ''::text ELSE place::text END) as row, (CASE p.status when 0 THEN '{$word}'::text ELSE p.prize::text END) as status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, concat(lastname, ' ', firstname) as fullname, p.id, p.status as id_status";
 
-        $criteria->select = "row_number() OVER (), p.status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, concat(lastname, ' ', firstname) as fullname, p.id";
         if(is_numeric($limit))
             $criteria->limit = $limit;
 

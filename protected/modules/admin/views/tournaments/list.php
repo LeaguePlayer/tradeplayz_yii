@@ -65,8 +65,22 @@ $this->menu=array(
 			},
 		),
 		'begin_stack',
-		array(
+				array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'template'=>'{test} {update} {delete}',
+            'buttons'=>array
+            (
+            	
+                'test' => array
+                (
+                    'label'=>'Test',
+                    'url'=>'Yii::app()->createUrl("/admin/tournaments/test", array("id_tour"=>$data->id))',
+                    'options'=>array(
+                        'class'=>'btn btn-small',
+                    ),
+                ),
+               
+                ),
 		),
 	),
 )); ?>

@@ -20,6 +20,7 @@
 	<?php echo $form->dropDownListControlGroup($model, 'id_format', Tournaments::getFormats(), array('class'=>'span8', 'displaySize'=>1)); ?>
 
 	<?php echo $form->dropDownListControlGroup($model, 'id_currency', Currency::getTournamentAllowedCurrencies(), array('class'=>'span8', 'displaySize'=>1)); ?>
+	<?php echo $form->dropDownListControlGroup($model, 'id_currency_to', Currency::getCurrencies(), array('class'=>'span8', 'displaySize'=>1)); ?>
 
 
 

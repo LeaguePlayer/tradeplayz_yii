@@ -20,6 +20,7 @@
         "tour_no_found" => 'Tournament not found',
         "registr_restrict" => 'Tournament is no longer available', 
         "not_enough_balance" => 'Not enough balance for registration', 
+        "not_enough_balance_for_bet" => 'Not enough balance for bet', 
         "status_participant_still_play" => 'Still play', 
         "status_participant_finished" => 'Finished', 
         "unknown_error" => 'Unknown error', 
@@ -31,4 +32,8 @@
 
         "action_not_available" => 'Action not available', 
         "error_sizing" => 'Sizing error', 
+        "won_tour" => 'Сongratulations! You won', 
+        "place" => 'place', 
+        "lost_tour" => 'You won', 
+        "money_get" => 'And got money', 
 	);

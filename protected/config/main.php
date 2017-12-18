@@ -5,7 +5,7 @@
 return array_replace_recursive(
     array(
         'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-        'name'=>'Malloko',
+        'name'=>'TradePlayz',
         'language' => 'en',
         'theme'=>'default',
         // preloading 'log' component

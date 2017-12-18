@@ -11,28 +11,21 @@
             $menuItems = array(
                // array('label'=>'Разделы сайта', 'url'=>array('/admin/structure')),
               //  array('label'=>'Меню сайта', 'url'=>array('/admin/menu')),
-                array('label'=>'Товары', 'url'=>"#",'items'=>[
-                        array('label'=>'Товарные категории', 'url'=>array('/admin/categories')),
-                         array('label'=>'ТРЦ', 'url'=>array('/admin/malls')),
-                        array('label'=>'Магазины', 'url'=>array('/admin/shops')),
+                // array('label'=>'Товары', 'url'=>"#",'items'=>[
+                //         array('label'=>'Товарные категории', 'url'=>array('/admin/categories')),
+                //          array('label'=>'ТРЦ', 'url'=>array('/admin/malls')),
+                //         array('label'=>'Магазины', 'url'=>array('/admin/shops')),
                         
-                    ]),
+                //     ]),
 
                 
                 
                
                 
-                array('label'=>'Акции/События', 'url'=>array('/admin/eventsstock')),
-                array('label'=>'Луки', 'url'=>array('/admin/looks')),
-                array('label'=>($this->actualUnholdersCard > 0) ? "Карты Malloko ({$this->actualUnholdersCard})" : "Карты Malloko", 'url'=>array('/admin/usersholderscard')),
+                array('label'=>'Турниры', 'url'=>array('/admin/tournaments')),
+                array('label'=>'FAQ', 'url'=>array('/admin/faq')),
+                array('label'=>'Чат', 'url'=>array('/admin/chat')),
 
-                 array('label'=>'Настройки', 'url'=>"#",'items'=>[
-                       array('label'=>'PUSH-уведомления', 'url'=>array('/admin/notification')),
-                       array('label'=>'Текстовый экраны', 'url'=>array('/admin/apppages')),
-                       array('label'=>'Слайдер на главной', 'url'=>array('/admin/slider')),
-                       array('label'=>'Хэштег дня', 'url'=>array('/admin/hashtagday')),
-                       array('label'=>'Настройки приложения', 'url'=>array('/admin/config')),
-                    ]),
                 
                // array('label'=>'Галереи', 'url'=>array('/admin/gallery/manage')),
             );
