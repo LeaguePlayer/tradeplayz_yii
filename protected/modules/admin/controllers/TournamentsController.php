@@ -40,12 +40,12 @@ class TournamentsController extends AdminController
 
 		$participants = Participants::model()->findAll($usersCriteria);
 		$participant_array = "<table class='tbl'>";
-		$participant_array .= "<thead><tr><td>place/name/prize/status</td></tr></thead>";
+		$participant_array .= "<thead><tr><td>place/name/prize/status/balance</td></tr></thead>";
 		$participant_array .= "<tbody>";
 		foreach($participants as $participant){
 			$st = Participants::getStatusAliases($participant->status);
 			$participant_array .= "<tr>";
-			$participant_array .= "<td class='user_status_{$participant->status}'>{$participant->place} / {$participant->user->firstname} {$participant->user->lastname} / {$participant->prize} / {$st}</td>";
+			$participant_array .= "<td class='user_status_{$participant->status}'>{$participant->place} / {$participant->user->firstname} {$participant->user->lastname} / {$participant->prize} / {$st} / {$participant->balance}</td>";
 			$participant_array .= "</tr>";
 		}
 		$participant_array .= "</tbody>";
