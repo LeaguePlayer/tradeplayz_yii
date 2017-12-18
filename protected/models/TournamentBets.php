@@ -35,6 +35,7 @@ class TournamentBets extends EActiveRecord
     public function relations()
     {
         return array(
+            'participant' => array(self::BELONGS_TO, 'Participants', 'id_participants'),
         );
     }
 

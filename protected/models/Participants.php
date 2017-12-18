@@ -73,6 +73,7 @@ class Participants extends EActiveRecord
     {
         return array(
             'tournament' => array(self::BELONGS_TO, 'Tournaments', 'id_tournament'),
+            'user' => array(self::BELONGS_TO, 'Users', 'id_client'),
         );
     }
 
