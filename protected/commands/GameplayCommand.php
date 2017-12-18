@@ -3,9 +3,9 @@
 class GameplayCommand extends CConsoleCommand {
 
 const CART_NEXT_FOUND = 'go_next_round';
-const TIME_ROUND = 10; // in seconds
-const TIME_BREAK_BETWEEN_ROUNDS = 10; // in seconds
-const TIME_SILINCE = 2; // in seconds
+const TIME_ROUND = 60; // in seconds
+const TIME_BREAK_BETWEEN_ROUNDS = 30; // in seconds
+const TIME_SILINCE = 10; // in seconds
 
     public function run($args) {
         $now = date('Y-m-d H:i:s');
