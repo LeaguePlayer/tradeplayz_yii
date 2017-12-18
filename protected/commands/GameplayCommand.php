@@ -3,9 +3,9 @@
 class GameplayCommand extends CConsoleCommand {
 
 const CART_NEXT_FOUND = 'go_next_round';
-const TIME_ROUND = 60; // in seconds
-const TIME_BREAK_BETWEEN_ROUNDS = 30; // in seconds
-const TIME_SILINCE = 10; // in seconds
+const TIME_ROUND = 10; // in seconds
+const TIME_BREAK_BETWEEN_ROUNDS = 10; // in seconds
+const TIME_SILINCE = 2; // in seconds
 
     public function run($args) {
         $now = date('Y-m-d H:i:s');
@@ -168,7 +168,7 @@ const TIME_SILINCE = 10; // in seconds
                 $allParticipants=$connection->createCommand($SQL)->queryAll();
 
 
-                $SQL="SELECT count(*) FROM participants WHERE id_tournament = {$tour[id]}";
+                $SQL="SELECT count(*) as count FROM participants WHERE id_tournament = {$tour[id]}";
                 $countAllParticipants=$connection->createCommand($SQL)->queryRow();
 
                 $max_levels = ceil( $countAllParticipants['count'] / $tour['id_format'] ); // $tour['id_format'] - это макс.
@@ -240,7 +240,9 @@ const TIME_SILINCE = 10; // in seconds
                             // var_dump($id_loser);die();
                             $SQL="SELECT min(place) as max FROM Participants WHERE id_tournament = {$tour[id]}";
                             $max_place = $connection->createCommand($SQL)->queryRow()['max'];
+                            var_dump($max_place);
                             $max_place = (is_null($max_place)) ? $countAllParticipants['count'] : $max_place-1;
+                            var_dump($max_place);
                             // $max_place
                             $got_prize = Tournaments::getTempPrizes($max_place);
                             
