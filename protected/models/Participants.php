@@ -45,11 +45,11 @@ class Participants extends EActiveRecord
     public function rules()
     {
         return array(
-            array('id_client, id_tournament, status, place, level', 'numerical', 'integerOnly'=>true),
+            array('id_client, id_tournament, status, place, level, cart', 'numerical', 'integerOnly'=>true),
             array('balance, prize', 'length', 'max'=>8),
             array('create_time', 'safe'),
             // The following rule is used by search().
-            array('id, id_client, id_tournament, status, balance, place, prize, create_time, level', 'safe', 'on'=>'search'),
+            array('id, id_client, id_tournament, status, balance, cart, place, prize, create_time, level', 'safe', 'on'=>'search'),
         );
     }
 
@@ -72,6 +72,7 @@ class Participants extends EActiveRecord
     public function relations()
     {
         return array(
+            'tournament' => array(self::BELONGS_TO, 'Tournaments', 'id_tournament'),
         );
     }
 

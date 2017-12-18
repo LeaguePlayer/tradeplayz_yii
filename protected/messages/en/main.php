@@ -15,6 +15,8 @@
         "status_publish" => 'Published',
         "status_finished" => 'Finished',
         "status_removed" => 'Removed',
+        "status_running" => 'Running',
+        "status_preparation" => 'Preparation',
         "tour_no_found" => 'Tournament not found',
         "registr_restrict" => 'Tournament is no longer available', 
         "not_enough_balance" => 'Not enough balance for registration', 
@@ -25,4 +27,8 @@
         "already_registred" => 'You already registred', 
         "participant_not_registred" => 'You not registred in tournament', 
         "email_incorrect" => 'Your email is not correct', 
+        "cant_send_empty_message" => 'You cant send empty message', 
+
+        "action_not_available" => 'Action not available', 
+        "error_sizing" => 'Sizing error', 
 	);

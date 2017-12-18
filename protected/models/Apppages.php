@@ -13,27 +13,58 @@
 */
 class Apppages extends EActiveRecord
 {
+    public $places = array(
+            "Заголовок"=>'title',
+            "Описание"=>'description',
+        );
+
     public function tableName()
     {
-        return '{{apppages}}';
+        return 'apppages';
     }
 
 
     public function rules()
     {
         return array(
-            array('title, meta_alias', 'length', 'max'=>255),
-            array('wswg_body, create_time, update_time', 'safe'),
+            array('meta_alias', 'length', 'max'=>255),
+            array('meta_alias', 'required'),
+            array('create_time, update_time', 'safe'),
             // The following rule is used by search().
-            array('id, title, wswg_body, meta_alias, create_time, update_time', 'safe', 'on'=>'search'),
+            array('id, meta_alias, create_time, update_time', 'safe', 'on'=>'search'),
         );
     }
 
 
     public function relations()
     {
-        return array(
-        );
+        $relations = array();
+        $lng = Yii::app()->language;
+        $cl_name = get_class($this);
+
+        foreach ($this->places as $place) {
+
+            $relations[$place] = array(self::HAS_ONE, 'ContentLang', 'post_id', 
+                'condition'=>"model_name = '{$cl_name}' and id_place='{$place}' and id_lang = '{$lng}'");
+        }
+
+        // $relations['rooms'] = array(self::HAS_MANY, 'ObjectRooms', 'id_object');
+
+        return $relations;
+    }
+
+    public function beforeSave()
+    {
+        parent::beforeSave();
+
+        if($this->isNewRecord)
+        {
+            $this->create_time = date("Y-m-d H:i");
+        }
+
+        $this->update_time = date("Y-m-d H:i");
+
+        return true;
     }
 
 
@@ -41,8 +72,6 @@ class Apppages extends EActiveRecord
     {
         return array(
             'id' => 'ID',
-            'title' => 'Заголовок',
-            'wswg_body' => 'Текст',
             'meta_alias' => 'META_ALIAS',
             'create_time' => 'Дата создания',
             'update_time' => 'Дата последнего редактирования',
@@ -66,8 +95,6 @@ class Apppages extends EActiveRecord
     {
         $criteria=new CDbCriteria;
 		$criteria->compare('id',$this->id);
-		$criteria->compare('title',$this->title,true);
-		$criteria->compare('wswg_body',$this->wswg_body,true);
 		$criteria->compare('meta_alias',$this->meta_alias,true);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);

@@ -27,16 +27,31 @@ class Tournaments extends EActiveRecord
         return 'tournaments';
     }
 
+    // Типы ставок
+    const BET_DOWN = 0; // на понижение
+    const BET_UP = 1; // на повышение
+
+
      // Статусы в базе данных
     const STATUS_NOT_PUBLISH = 0;
     const STATUS_PUBLISH = 1;
     const STATUS_FINISHED = 2;
     const STATUS_REMOVED = 3;
+    const STATUS_PREPARATION = 4; //preparation 
+    const STATUS_RUNNING = 5; //RUNNING 
     const STATUS_DEFAULT = self::STATUS_PUBLISH;
 
     const ALLOWED_STATUSES = array(
             Tournaments::STATUS_PUBLISH,
             Tournaments::STATUS_FINISHED,
+            Tournaments::STATUS_PREPARATION,
+            Tournaments::STATUS_RUNNING,
+        );
+
+    const ALLOWED_FOR_BET = array(
+            Tournaments::STATUS_PUBLISH,
+            Tournaments::STATUS_PREPARATION,
+            Tournaments::STATUS_RUNNING,
         );
 
 
@@ -47,6 +62,8 @@ class Tournaments extends EActiveRecord
             self::STATUS_PUBLISH => Yii::t('main','status_publish'),
             self::STATUS_FINISHED => Yii::t('main','status_finished'),
             self::STATUS_REMOVED => Yii::t('main','status_removed'),
+            self::STATUS_PREPARATION => Yii::t('main','status_preparation'),
+            self::STATUS_RUNNING => Yii::t('main','status_running'),
         );
 
         if ($status > -1)
@@ -82,12 +99,12 @@ class Tournaments extends EActiveRecord
     public function rules()
     {
         return array(
-            array('status, prize_places, id_format, id_currency', 'numerical', 'integerOnly'=>true),
+            array('status, prize_places, id_format, id_currency, level, id_currency_to, paused', 'numerical', 'integerOnly'=>true),
             array('byuin, prize_pool, begin_stack', 'length', 'max'=>8),
             array('dttm_begin, prize_pool, begin_stack, byuin', 'required'),
             array('dttm_begin, dttm_finish', 'safe'),
             // The following rule is used by search().
-            array('id, dttm_begin, status, prize_places, byuin, id_format, id_currency, prize_pool, dttm_finish, begin_stack', 'safe', 'on'=>'search'),
+            array('id, dttm_begin, status, prize_places, byuin, level, id_currency_to, id_format, id_currency, prize_pool, dttm_finish, begin_stack', 'safe', 'on'=>'search'),
         );
     }
 
@@ -139,6 +156,7 @@ class Tournaments extends EActiveRecord
             'byuin' => 'Byuin',
             'id_format' => 'Id Format',
             'id_currency' => 'Id Currency',
+            'id_currency_to' => 'Id Currency To',
             'prize_pool' => 'Prize Pool',
             'dttm_finish' => 'Dttm Finish',
             'begin_stack' => 'Begin Stack',
@@ -190,39 +208,61 @@ class Tournaments extends EActiveRecord
                     ));
     }
 
-    public static function getAllPrizes( $all_players_in_tour, $percent_in_the_money, $limit = false )
+    public static function getAllPrizes( $all_players_in_tour, $percent_in_the_money, $limit = false, $prefix = "TPZ" )
     {
         // запилить механику распределяющую
+        
         $result = array();
 
-        $result[] = array(
-                'row_number'=>'1',
-                'prize'=>'54 TPZ',
+
+        $max = 50;
+
+        for($i = 1; $i <= $max; $i++)
+        {
+            $prize = $max * 10 - $i*9;
+            $result[] = array(
+                'row_number'=>(string)$i,
+                'prize'=>trim("{$prize} {$prefix}"),
             );
-        $result[] = array(
-                'row_number'=>'2',
-                'prize'=>'34 TPZ',
-            );
-        $result[] = array(
-                'row_number'=>'3',
-                'prize'=>'24 TPZ',
-            );
-        $result[] = array(
-                'row_number'=>'4',
-                'prize'=>'14 TPZ',
-            );
-        $result[] = array(
-                'row_number'=>'5',
-                'prize'=>'4 TPZ',
-            );
+        }
+
+
+        if( is_numeric($limit) && $limit <= count($result) )
+           $result = array_slice($result, 0, $limit);
+        
 
         
         return $result;
     }
 
+    public static function getTempPrizes($n = false)
+    {
+        $result = array(
+                1 => 50,
+                2 => 20,
+                3 => 9,
+                4 => 9,
+                5 => 1,
+                6 => 1,
+                7 => 1,
+                8 => 1,
+                9 => 1,
+                10 => 1,
+                11 => 1,
+                12 => 1,
+                13 => 1,
+                14 => 1,
+            );
+
+        if(is_numeric($n))
+            return (is_null($result[$n])) ? 0 : $result[$n];
+        else
+            return $result;
+    }
 
 
-    public function getAllRegistredPlayersByTourId( $id_tour, $limit = false )
+
+    public function getAllRegistredPlayersByTourId( $id_tour, $limit = false, $query = false )
     {
         $id_auth_user = Yii::app()->controller->user->id;
 
@@ -230,16 +270,51 @@ class Tournaments extends EActiveRecord
         $criteria->addCondition("id_tournament = :id_tournament");
         $criteria->params[":id_tournament"] = $id_tour;
         $criteria->order = "place ASC";
-        $criteria->select = "row_number() OVER (), p.status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, (SELECT concat(lastname, ' ', firstname) as fullname  FROM Users u WHERE u.id = p.id_client)";
+
+        if($query)
+        {
+            $criteriaQuery = new CDbCriteria;
+            $criteriaQuery->addCondition("LOWER(concat(lastname, ' ', firstname)) LIKE " .  Yii::app()->db->quoteValue('%' . mb_strtolower($query) . '%') );
+            $criteriaQuery->addCondition("id_tournament = :id_tournament");
+            $criteriaQuery->params[":id_tournament"] = $id_tour;
+            $criteriaQuery->order = "place ASC";
+            $idsExist = array();
+            $filteredData = Yii::app()->db->createCommand()->select( "p.id" )
+                                       ->from(Participants::model()->tableName(). " as p left join users u on (u.id = p.id_client)")
+                                       ->where($criteriaQuery->condition, $criteriaQuery->params)
+                                       ->order($criteriaQuery->order)
+                                       ->queryAll();
+
+            foreach($filteredData as $n => $d)
+                $idsExist[] = $d['id'];
+
+            unset($criteriaQuery);
+            // var_dump($idsExist);die();
+            // $criteria->addInCondition('p.id', $idsExist);
+        }
+
+        
+
+        $criteria->select = "row_number() OVER (), p.status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, concat(lastname, ' ', firstname) as fullname, p.id";
         if(is_numeric($limit))
             $criteria->limit = $limit;
 
-        // $command = Yii::app()->db->createCommand('SET @row_number = 0;')->queryAll();
         $data = Yii::app()->db->createCommand()->select( $criteria->select )
-                                       ->from(Participants::model()->tableName(). " as p")
+                                       ->from(Participants::model()->tableName(). " as p left join users u on (u.id = p.id_client)")
                                        ->where($criteria->condition, $criteria->params)
                                        ->order($criteria->order)
+                                       ->limit($criteria->limit)
                                        ->queryAll();
+
+                        
+        if(!empty($idsExist))
+        {
+            foreach($data as $i => $d)
+                if(!in_array($d['id'], $idsExist))
+                    unset($data[$i]);
+            $data = array_values(array_filter($data));
+        }           
+        
 
         return $data;
 

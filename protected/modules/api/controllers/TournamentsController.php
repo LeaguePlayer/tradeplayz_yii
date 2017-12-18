@@ -8,7 +8,7 @@ class TournamentsController extends ApiController
 
 		//params
 		$interval_start = date("Y-m-d H:i",strtotime("-1 day"));
-		$interval_finish = date("Y-m-d H:i");
+		$interval_finish = date("Y-m-d H:i",strtotime("+1 day"));
 
 		// init
 		$json = new JsonModel;
@@ -69,6 +69,62 @@ class TournamentsController extends ApiController
 	}
 
 
+	public function actionGetAllPrizes( $id_tour )
+	{
+		// init
+		$json = new JsonModel;
+		$result = array();
+
+		//criteria
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('status', Tournaments::ALLOWED_STATUSES);
+		$criteria->addCondition("id = :id");
+		$criteria->params[":id"] =  $id_tour;
+		$criteria->select = "t.prize_places, t.id, (select count(*) from participants where id_tournament = t.id) as all_registred_players";
+		
+		//request
+		$tour = Yii::app()->db->createCommand()->select( $criteria->select )
+									   ->from(Tournaments::model()->tableName()." t")
+									   ->where($criteria->condition, $criteria->params)
+									   ->queryRow();
+
+		if(empty($tour))
+		{
+			$json->error_text=Yii::t('main','tour_no_found');
+			$json->returnError(JsonModel::CUSTOM_ERROR);
+			return true;
+		}
+
+		$allPrizes = Tournaments::getAllPrizes( $tour['all_registred_players'], $tour['prize_places'], $limit = false, $prefix = "" );
+
+		$result = array(
+				'prizes'=>$allPrizes,
+			);
+		
+		//return
+		$json->registerResponseObject('tournament', $result);
+		$json->returnJson();
+	}
+
+
+	public function actionGetAllParticipants( $id_tour, $query = false )
+	{
+		// init
+		$json = new JsonModel;
+		$result = array();
+
+		$allRegistredPlayers = Tournaments::getAllRegistredPlayersByTourId( $id_tour, $limit = false, $query );
+
+		$result = array(
+				'participants'=>$allRegistredPlayers,
+			);
+		
+		//return
+		$json->registerResponseObject('tournament', $result);
+		$json->returnJson();
+	}
+
+
 	public function actionViewLobby( $id_tour )
 	{
 		// init
@@ -86,7 +142,7 @@ class TournamentsController extends ApiController
 		$criteria->params[":id_lang"] =  Yii::app()->language;
 		$status_participants_still_play = Participants::STATUS_STILL_PLAY;
 
-		$criteria->select = "(CASE part.id_client WHEN {$this->user->id} THEN 1 ELSE 0 END) as you_registred, t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play, (SELECT wswg_body FROM content_lang cl WHERE cl.post_id = :id and cl.id_place = 'rules' and cl.model_name = :model_name and id_lang = :id_lang LIMIT 1) as rules";
+		$criteria->select = "(CASE part.id_client WHEN {$this->user->id} THEN 1 ELSE 0 END) as you_registred, t.*, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id) as participants_all, ( SELECT count(*) FROM participants p WHERE id_tournament = t.id and p.status = {$status_participants_still_play}) as participants_still_play, (SELECT wswg_body FROM content_lang cl WHERE cl.post_id = :id and cl.id_place = 'rules' and cl.model_name = :model_name and id_lang = :id_lang LIMIT 1) as rules, (select count(*) from participants where id_tournament = t.id) as all_registred_players";
 
 		
 		//request
@@ -96,18 +152,16 @@ class TournamentsController extends ApiController
 									   ->order($criteria->order)
 									   ->queryRow();
 
-// 									   $query=str_replace(
-//    array_keys($tour->params),
-//    array_values($tour->params),
-//    $tour->getText()
-// );
-									   // var_dump($tour->getText());
-									   // die();
-		// form data
-		// var_dump($tour);die();
-		// $countRegistredPlayers = Tournaments::getCountRegistredPlayers( $tour['id'] );
+		if(empty($tour))
+		{
+			$json->error_text=Yii::t('main','tour_no_found');
+			$json->returnError(JsonModel::CUSTOM_ERROR);
+			return true;
+		}
+
+
 		$allRegistredPlayers = Tournaments::getAllRegistredPlayersByTourId( $tour['id'], $limit = 5 );
-		$allPrizes = Tournaments::getAllPrizes( $allRegistredPlayers, $tour['prize_places'] , $limit = 5 );
+		$allPrizes = Tournaments::getAllPrizes( $tour['all_registred_players'], $tour['prize_places'] , $limit = 5 );
 
 		$currency_play = Currency::getTournamentAllowedCurrencies( $tour['id_currency'] );
 		$format_play = Tournaments::getFormats( $tour['id_format'] );
@@ -204,6 +258,75 @@ class TournamentsController extends ApiController
 		$json->returnJson();
 	}
 
+
+	public function actionBet( $id_type_bet, $sizing )
+	{
+		$json = new JsonModel;
+		$result = false;
+
+		if(!in_array($sizing, array(25,50,100)) || !in_array($id_type_bet, array( Tournaments::BET_DOWN, Tournaments::BET_UP )) ) // список доступных ставок
+		{
+			$json->error_text=Yii::t('main','error_sizing');
+			$json->returnError(JsonModel::CUSTOM_ERROR);
+			return true;
+		}
+
+		if(is_object($this->user->active_participant)) // пользователь участвует в турнире
+		{
+			$allowed_status_tour_for_bet = Tournaments::ALLOWED_FOR_BET;
+
+			if(in_array($this->user->active_participant->tournament->status, $allowed_status_tour_for_bet) && $this->user->active_participant->tournament->paused == 0) // ставка разрешена
+			{
+				// проверяем баланс 
+				$this->user->active_participant->balance -= $sizing;
+				if($this->user->active_participant->balance >= 0)
+				{
+					// ставку разрешаем
+					$bet = new TournamentBets;
+					$bet->id_participants = $this->user->active_participant->id;
+					$bet->id_type_bet = $id_type_bet;
+					$bet->sizing = $sizing;
+					$bet->id_tournament = $this->user->active_participant->tournament->id;
+					$bet->create_time = date("Y-m-d H:i:s");
+					
+
+					$result= $bet->save();
+					if($result)
+					{
+						// списываем баланс ставки
+						$this->user->active_participant->update();
+					}
+				}
+				else
+				{
+					$json->error_text=Yii::t('main','not_enough_balance');
+					$json->returnError(JsonModel::CUSTOM_ERROR);
+					return true;
+				}
+				
+			}
+			else
+			{
+				$json->error_text=Yii::t('main','action_not_available');
+				$json->returnError(JsonModel::CUSTOM_ERROR);
+				return true;
+			}
+		}
+		else
+		{
+			$json->error_text=Yii::t('main','participant_not_registred');
+			$json->returnError(JsonModel::CUSTOM_ERROR);
+			return true;
+		}
+		
+		
+
+
+
+		 $json->registerResponseObject('bet', $result);
+		
+		 $json->returnJson();
+	}
 
 	public function actionRegisterToTour( $id_tour )
 	{

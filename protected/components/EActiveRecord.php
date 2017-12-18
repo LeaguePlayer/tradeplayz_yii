@@ -211,7 +211,7 @@ class EActiveRecord extends CActiveRecord
 
         if(is_object($this->getActiveRelation($place)))
         { 
-            // var_dump($place);die();
+            
             if(is_null($this->$place)) //  модель не создана
             {
                 $contentLang = new ContentLang;

@@ -5,7 +5,7 @@
  */
 class Controller extends CController
 {
-    public $ALLOWED_COUNTRIES = array('ru','en');
+    public $ALLOWED_COUNTRIES = array('ru','en'); // если будем расширять языки, надо чтобы и в /config/cron.php, добавить в params
 
     public static function languageTranslate( $lang )
     {

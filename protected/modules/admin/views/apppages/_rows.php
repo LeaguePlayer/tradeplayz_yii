@@ -1,11 +1,31 @@
-	<?php echo $form->textFieldControlGroup($model,'title',array('class'=>'span8','maxlength'=>255)); ?>
+<?
+	$place = "title";
+	$name_place = "Название";
+?>
+<label class="control-label"><? echo $name_place; ?></label>
+<?
+echo CHtml::textField("ContentLang[{$place}]", $model->$place->text,array('class'=>'span8','maxlength'=>255));
+?>
 
+
+<?
+	$place = "description";
+	$name_place = "Правила";
+?>
 	<div class='control-group'>
-		<?php echo CHtml::activeLabelEx($model, 'wswg_body'); ?>
-		<?php $this->widget('appext.ckeditor.CKEditorWidget', array('model' => $model, 'attribute' => 'wswg_body', 'config' => array('width' => '100%')
-		)); ?>
-		<?php echo $form->error($model, 'wswg_body'); ?>
+			<label class="control-label"><? echo $name_place; ?></label>
+
+			<?
+				$this->widget('appext.ckeditor.CKEditorWidget', 
+					array(
+						'name' => "ContentLang[{$place}]",
+						'config' => array('width' => '100%', 'height'=>'280'),
+						'value'=>$model->$place->text,
+					)
+				);
+			?>
+
+
 	</div>
 
-	<?php echo $form->textFieldControlGroup($model,'meta_alias',array('class'=>'span8','maxlength'=>255)); ?>
-
+	
