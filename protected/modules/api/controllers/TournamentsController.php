@@ -330,7 +330,7 @@ class TournamentsController extends ApiController
 
 		if(is_object($participant))
 		{
-			if($participant->tournament->status == Tournaments::STATUS_FINISHED)
+			if($participant->status == Participants::STATUS_FINISHED)
 			{
 				// отправляем сообщение
 				if($participant->place == 1)

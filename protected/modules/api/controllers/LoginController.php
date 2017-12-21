@@ -62,9 +62,9 @@ class LoginController extends ApiController
 
 			if(!empty($got_user)) // пользователь существует
 			{
-				$got_user->attributes = $user;
-				$got_user->img_avatar = $user['img_avatar'];
-				$got_user->update();
+				// $got_user->attributes = $user;
+				// $got_user->img_avatar = $user['img_avatar'];
+				// $got_user->update();
 
 					// обновляем данные об устройстве
 					$got_user_device = UserDevices::model()->find(

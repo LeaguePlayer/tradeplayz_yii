@@ -6,11 +6,25 @@ class UsersController extends ApiController
 	{
 
 		$json = new JsonModel;
+
+		$urlAvatar = null;
+		if(!is_null($this->user->img_avatar))
+			{
+
+				$pos = strpos('http', $this->user->img_avatar);
+					if ($pos === false)
+						$urlAvatar = 'http://'.$_SERVER['HTTP_HOST'].$this->user->getImageUrl('small');
+
+			}
+			
+				
+			
+
 		$result = array(
 				"id"=>$this->user->id,
 				"firstname"=>$this->user->firstname,
 				"lastname"=>$this->user->lastname,
-				"img_avatar"=>$this->user->img_avatar,
+				"img_avatar"=>$urlAvatar,
 				"balance"=>$this->user->balance,
 				"login"=>$this->user->login,
 				"rating"=>$this->user->rating,
@@ -31,13 +45,21 @@ class UsersController extends ApiController
 
 	}
 
+	public function actionForgotPassword()
+	{
+		$subject = 'new password';
+		$message = 'new message';
+		$a = SiteHelper::sendMail($subject,$message,$to='minderov@amobile-studio.ru');
+		var_dump($a);die();
+	}
+
 
 	public function actionEditProfile()
 	{
 		// allowed values for change
 		$allowedParams = array(
 				'name',
-				'img_avatar',
+				// 'img_avatar',
 				'address',
 				'zipcode',
 				'email',
@@ -47,7 +69,13 @@ class UsersController extends ApiController
 		$json = new JsonModel;
 		$result = false;
 
-		$user_params = Yii::app()->request->getParam('user');
+
+		// $json->registerResponseObject('user', $_FILES);
+		
+		//  $json->returnJson();
+		//  return false;
+		$user_params = Yii::app()->request->getPost('user');
+		// $user_params = Yii::app()->request->getParam('user');
 
 		// test data
 			// $user_params = array(
@@ -64,6 +92,11 @@ class UsersController extends ApiController
 			// 			"currency"=>"43",
 			// 			"status"=>"43",
 			// 		 );
+
+
+		if(!empty($_FILES['Users']))
+			$this->user->attributes = $_FILES['Users'];
+
 
 		if(!is_null($user_params))
 		{
@@ -97,6 +130,8 @@ class UsersController extends ApiController
 					$this->user->$param = $value;
 			}
 
+		
+
 			$result = $this->user->update();
 			if(!$result)
 			{
@@ -119,7 +154,14 @@ class UsersController extends ApiController
 	}
 
 
-
+	public function accessRules()
+		{
+			return array(
+				array('allow',  // allow all users to perform 'index' and 'view' actions
+					'actions'=>array('forgotPassword'),
+				),
+			);
+		}
 	
 
 }
