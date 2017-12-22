@@ -122,7 +122,7 @@ try {
 		
 		//  $json->returnJson();
 		//  return false;
-		$user_params = Yii::app()->request->getPost('user');
+		$user_params = Yii::app()->request->getPost('users');
 		// $user_params = Yii::app()->request->getParam('user');
 
 		// test data
@@ -142,8 +142,8 @@ try {
 			// 		 );
 
 
-		if(!empty($_FILES['User']))
-			$this->user->attributes = $_FILES['User'];
+		if(!empty($_FILES['Users']))
+			$this->user->attributes = $_FILES['Users'];
 
 
 		if(!is_null($user_params))

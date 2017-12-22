@@ -125,11 +125,11 @@ const TIME_SILINCE = 10; // in seconds
             $time_silince_begin = $tour_begin_time +  ( (self::TIME_ROUND-self::TIME_SILINCE) + ( ($tour['level']-1) * (self::TIME_BREAK_BETWEEN_ROUNDS + self::TIME_ROUND) ) ) ;
             $time_to_ready_next_round_timestamp = $tour_begin_time + ( (self::TIME_ROUND + self::TIME_BREAK_BETWEEN_ROUNDS) + ( ($tour['level']-1) * (self::TIME_BREAK_BETWEEN_ROUNDS + self::TIME_ROUND) ) );
 
-            // test time data
-            var_dump(date("d.m.Y H:i:s"));
-            var_dump(date("d.m.Y H:i:s",$time_silince_begin));
-            var_dump(date("d.m.Y H:i:s",$time_to_finish_round_timestamp));
-            var_dump(date("d.m.Y H:i:s",$time_to_ready_next_round_timestamp));
+            // // test time data
+            // var_dump(date("d.m.Y H:i:s"));
+            // var_dump(date("d.m.Y H:i:s",$time_silince_begin));
+            // var_dump(date("d.m.Y H:i:s",$time_to_finish_round_timestamp));
+            // var_dump(date("d.m.Y H:i:s",$time_to_ready_next_round_timestamp));
 
             //// несколько слов о paused параметре
             //  пауза ставится тогда, когда турнир переходит в режим тишины, 
