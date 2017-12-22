@@ -277,55 +277,26 @@ class Tournaments extends EActiveRecord
     {
         $id_auth_user = Yii::app()->controller->user->id;
 
-        $criteria = new CDbCriteria;
-        $criteria->addCondition("id_tournament = :id_tournament");
-        $criteria->params[":id_tournament"] = $id_tour;
-        $criteria->order = "place ASC";
-
-        if($query)
+        if(!is_numeric($id_tour))
         {
-            $criteriaQuery = new CDbCriteria;
-            $criteriaQuery->addCondition("LOWER(concat(lastname, ' ', firstname)) LIKE " .  Yii::app()->db->quoteValue('%' . mb_strtolower($query) . '%') );
-            $criteriaQuery->addCondition("id_tournament = :id_tournament");
-            $criteriaQuery->params[":id_tournament"] = $id_tour;
-            // $criteriaQuery->order = "place ASC NULLS LAST";
-            $idsExist = array();
-            $filteredData = Yii::app()->db->createCommand()->select( "p.id, place" )
-                                       ->from(Participants::model()->tableName(). " as p left join users u on (u.id = p.id_client)")
-                                       ->where($criteriaQuery->condition, $criteriaQuery->params)
-                                       ->order($criteriaQuery->order)
-                                       ->queryAll();
-
-            foreach($filteredData as $n => $d)
-                $idsExist[] = $d['id'];
-
-            unset($criteriaQuery);
-            // var_dump($idsExist);die();
-            // $criteria->addInCondition('p.id', $idsExist);
+            $json->error_text=Yii::t('main','unknown_error');
+            $json->returnError(JsonModel::CUSTOM_ERROR);
+            return true;
         }
 
-        $word = Yii::t('main','status_participant_still_play');
-        $criteria->select = "(CASE when place is null THEN ''::text ELSE place::text END) as row, (CASE p.status when 0 THEN '{$word}'::text ELSE p.prize::text END) as status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, concat(lastname, ' ', firstname) as fullname, p.id, p.status as id_status";
-
-        if(is_numeric($limit))
-            $criteria->limit = $limit;
-
-        $data = Yii::app()->db->createCommand()->select( $criteria->select )
-                                       ->from(Participants::model()->tableName(). " as p left join users u on (u.id = p.id_client)")
-                                       ->where($criteria->condition, $criteria->params)
-                                       ->order($criteria->order)
-                                       ->limit($criteria->limit)
-                                       ->queryAll();
-
-                        
-        if(!empty($idsExist))
-        {
-            foreach($data as $i => $d)
-                if(!in_array($d['id'], $idsExist))
-                    unset($data[$i]);
-            $data = array_values(array_filter($data));
-        }           
         
+        $query_string = "";
+        if($query)
+            $query_string = "AND LOWER(concat(lastname, ' ', firstname)) LIKE " .  Yii::app()->db->quoteValue('%' . mb_strtolower($query) . '%');
+
+        $lim_query = "";
+        if(is_numeric($limit))
+            $lim_query = "LIMIT {$limit}";
+
+
+        $SQL = "SELECT (CASE when place is null THEN ''::text ELSE place::text END) as row, (CASE p.status when 0 THEN '{$word}'::text ELSE p.prize::text END) as status, (CASE id_client WHEN {$id_auth_user} THEN 1 ELSE 0 END) as me, concat(lastname, ' ', firstname) as fullname, p.id, p.status as id_status FROM participants as p left join users u on (u.id = p.id_client) WHERE id_tournament = {$id_tour} {$query_string} ORDER BY place ASC NULLS FIRST {$lim_query}";
+
+        $data = Yii::app()->db->createCommand($SQL)->queryAll();
 
         return $data;
 

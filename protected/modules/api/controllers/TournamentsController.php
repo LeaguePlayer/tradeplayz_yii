@@ -77,6 +77,48 @@ class TournamentsController extends ApiController
 	}
 
 
+	public function actionHistory()
+	{
+		// init
+		$json = new JsonModel;
+		$result = array();
+
+		//criteria
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("p.status = :status and id_client = :id_client");
+		$criteria->params[":status"] =  Participants::STATUS_FINISHED;
+		$criteria->params[":id_client"] =  $this->user->id;
+		$criteria->select = "t.dttm_begin, p.prize, t.byuin, t.prize_pool";
+		$criteria->order = "p.create_time DESC";
+		
+		//request
+		$tours = Yii::app()->db->createCommand()->select( $criteria->select )
+									   ->from(Participants::model()->tableName()." as p inner join tournaments as t on (t.id = p.id_tournament)")
+									   ->where($criteria->condition, $criteria->params)
+									   ->queryAll();
+
+
+		// form data
+		foreach($tours as $tour)
+		{
+			$prize_won_value = number_format($tour['prize'], 0, ',', ' ');
+			$prize_pool_value = number_format($tour['prize_pool'], 0, ',', ' ');
+			$buyin = ($tour['byuin'] == 0) ? "FREE ROLL" : number_format($tour['byuin'], 0, ',', ' ')." TPZ";
+			$result[] = array(
+					'begin_date'=>date("d.m.Y",strtotime($tour['dttm_begin'])),
+					'begin_time'=>date("H:i",strtotime($tour['dttm_begin'])),
+					'prize_won'=>"{$prize_won_value} TPZ",
+					'prize_pool'=>"{$prize_pool_value} TPZ",
+					'buyin'=>$buyin,
+				);
+		}
+	
+		
+		//return
+		$json->registerResponseObject('history', $result);
+		$json->returnJson();
+	}
+
 	public function actionGetAllPrizes( $id_tour )
 	{
 		// init
@@ -126,6 +168,7 @@ class TournamentsController extends ApiController
 		{
 			$allowed_status_tour_for_redirect = Tournaments::ALLOWED_FOR_REDIRECT;
 
+			// var_dump(Tournaments::ALLOWED_FOR_REDIRECT);die();
 			if(in_array($this->user->active_participant->tournament->status, $allowed_status_tour_for_redirect)) // игрок участвует в турнире
 			{
 				$tour = $this->user->active_participant->tournament;
@@ -135,8 +178,7 @@ class TournamentsController extends ApiController
 
 				$result = array(
 						'id'=>$tour->id,
-						'balance'=>$participant->balance,
-						'balance'=>$participant->balance,
+						'balance'=>number_format($participant->balance, 0, ',', ' '),
 						'name'=>"{$currency} / {$currency_to}",
 						'begin'=>date("H:i",strtotime($tour->dttm_begin)),
 					);
@@ -348,7 +390,7 @@ class TournamentsController extends ApiController
 			}
 			else
 			{
-				$result['balance'] =  $participant->balance;
+				$result['balance'] =  number_format($participant->balance, 0, ',', ' ');
 			}
 		}
 
@@ -398,7 +440,7 @@ class TournamentsController extends ApiController
 						$this->user->active_participant->update();
 
 						$result = array(
-								'balance'=>$this->user->active_participant->balance,
+								'balance'=>number_format($this->user->active_participant->balance, 0, ',', ' '),
 								'bet'=>true,
 							);
 					}

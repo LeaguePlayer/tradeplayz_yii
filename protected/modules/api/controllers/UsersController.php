@@ -47,10 +47,58 @@ class UsersController extends ApiController
 
 	public function actionForgotPassword()
 	{
-		$subject = 'new password';
-		$message = 'new message';
-		$a = SiteHelper::sendMail($subject,$message,$to='minderov@amobile-studio.ru');
-		var_dump($a);die();
+// 		use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\Exception;
+
+//Load composer's autoloader
+$mail=dirname(__FILE__).'/../../../../vendor/autoload.php';
+require $mail;
+
+
+$mail = new PHPMailer\PHPMailer\PHPMailer(true);                              // Passing `true` enables exceptions
+// var_dump($mail);die();
+try {
+    //Server settings
+    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = 'alex@tradeplayz.com';                 // SMTP username
+    $mail->Password = 'hbjsfk7676YF465tgds89)';                           // SMTP password
+    $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = 465;                                    // TCP port to connect to
+
+    //Recipients
+    $mail->setFrom('alex@tradeplayz.com', 'Mailer');
+    $mail->addAddress('minderov@amobile-studio.ru', 'Joe User');     // Add a recipient
+    // $mail->addAddress('ellen@example.com');               // Name is optional
+    // $mail->addReplyTo('info@example.com', 'Information');
+    // $mail->addCC('cc@example.com');
+    // $mail->addBCC('bcc@example.com');
+
+    //Attachments
+    // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+    // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+
+    //Content
+    $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->Subject = 'Here is the subject';
+    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+    $mail->send();
+    echo 'Message has been sent';
+} catch (PHPMailer\PHPMailer\Exception $e) {
+    echo 'Message could not be sent.';
+    echo 'Mailer Error: ' . $mail->ErrorInfo;
+}
+
+
+		die();
+		// $subject = 'new password';
+		// $message = 'new message';
+		// $a = SiteHelper::sendMail($subject,$message,$to='minderov@amobile-studio.ru');
+		// var_dump($a);die();
 	}
 
 
@@ -94,8 +142,8 @@ class UsersController extends ApiController
 			// 		 );
 
 
-		if(!empty($_FILES['Users']))
-			$this->user->attributes = $_FILES['Users'];
+		if(!empty($_FILES['User']))
+			$this->user->attributes = $_FILES['User'];
 
 
 		if(!is_null($user_params))
