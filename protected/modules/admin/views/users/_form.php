@@ -1,5 +1,7 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'users-form',
+	'method'=>'POST',
+	'action'=>"http://dev.tradeplayz.com/api/users/editProfile?token=ed2e8fcc143c162bbd537d0d9bab3476",
 	'enableAjaxValidation'=>false,
 		'htmlOptions' => array('enctype'=>'multipart/form-data'),
 )); ?>

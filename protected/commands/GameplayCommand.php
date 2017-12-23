@@ -114,11 +114,19 @@ const TIME_SILINCE = 10; // in seconds
 
         // берем все начатые турниры
         $status_publish = Tournaments::STATUS_RUNNING;
-        $SQL="SELECT * FROM tournaments WHERE status = {$status_publish}";
+        $SQL="SELECT *, (SELECT count(*) FROM Participants WHERE id_tournament = tournaments.id) as registred_players FROM tournaments WHERE status = {$status_publish}";
         $allToursReadyToStart=$connection->createCommand($SQL)->queryAll();
 
         foreach($allToursReadyToStart as $tour)
         {
+            if($tour['registred_players'] == 0) // турнир без зареганных участников - закрываем его
+            {
+                $status = Tournaments::STATUS_FINISHED;
+                $SQL="UPDATE tournaments SET status = {$status}, dttm_finish = '{$now}' WHERE id = '$tour[id]'";
+                $connection->createCommand($SQL)->execute();
+                continue;
+            }
+            
             $now_timestamp = time();
             $tour_begin_time = strtotime("+1 minute ".$tour['dttm_begin']); // это та минута, которая в холостую простаивает после начала турнира, т.к. подготовительная
             $time_to_finish_round_timestamp = $tour_begin_time + ( (self::TIME_ROUND) + ( ($tour['level']-1) * (self::TIME_BREAK_BETWEEN_ROUNDS + self::TIME_ROUND) ) );
@@ -172,6 +180,9 @@ const TIME_SILINCE = 10; // in seconds
                 $countAllParticipants=$connection->createCommand($SQL)->queryRow();
 
                 $max_levels = ceil( $countAllParticipants['count'] / $tour['id_format'] ); // $tour['id_format'] - это макс.
+                // var_dump($max_levels);
+                // var_dump($tour['level']);
+                // var_dump($allParticipants);
                 $finish_level = false;
                 if($max_levels == $tour['level']) // это был последний уровень турнира
                 {
@@ -183,43 +194,58 @@ const TIME_SILINCE = 10; // in seconds
                 } 
 
                 $cart_for_change_winner = array();
-                foreach($allParticipants as $participant)
+                if(!empty($allParticipants))
                 {
-                    $SQL="SELECT * FROM tournament_bets WHERE id_tournament = {$tour[id]} and id_participants =  {$participant[id]} and result is null ORDER BY create_time ASC";
-                    $all_player_bets_in_round=$connection->createCommand($SQL)->queryAll();
-
-                    $max_result_user = 0;
-                    foreach($all_player_bets_in_round as $bet_in_round)
+                    foreach($allParticipants as $participant)
                     {
-                        //R - результат
-                        // D - котировка на момент окончания раунда
-                        // d1 - котировка на момент ставки1
-                        // х1 - размер ставки
+                        $SQL="SELECT * FROM tournament_bets WHERE id_tournament = {$tour[id]} and id_participants =  {$participant[id]} and result is null ORDER BY create_time ASC";
+                        $all_player_bets_in_round=$connection->createCommand($SQL)->queryAll();
 
-                        // Формула:
-                        // R=x1*(D-d1)
-                         $v1 = ($bet_in_round['id_type_bet'] == Tournaments::BET_DOWN) ? -1 : 1;
-                         $x1 = $bet_in_round['sizing'];
-                         $D = $graph_value_y_in_end;
-                         $d1 = $bet_in_round['value_when_was_bet'];
-                         $R = ($v1*$x1)*($D - $d1);
+                        $max_result_user = 0;
+                        foreach($all_player_bets_in_round as $bet_in_round)
+                        {
+                            //R - результат
+                            // D - котировка на момент окончания раунда
+                            // d1 - котировка на момент ставки1
+                            // х1 - размер ставки
 
-                         // var_dump($d1);die();
-                         $max_result_user += $R;
-                         // фиксируем результат ставки в бд
-                         $SQL="UPDATE tournament_bets SET result = {$R} WHERE id = '$bet_in_round[id]'";
-                         $connection->createCommand($SQL)->execute();
+                            // Формула:
+                            // R=x1*(D-d1)
+                             $v1 = ($bet_in_round['id_type_bet'] == Tournaments::BET_DOWN) ? -1 : 1;
+                             $x1 = $bet_in_round['sizing'];
+                             $D = $graph_value_y_in_end;
+                             $d1 = $bet_in_round['value_when_was_bet'];
+                             $R = ($v1*$x1)*($D - $d1);
 
+                             // var_dump($d1);die();
+                             $max_result_user += $R;
+                             // фиксируем результат ставки в бд
+                             $SQL="UPDATE tournament_bets SET result = {$R} WHERE id = '$bet_in_round[id]'";
+                             $connection->createCommand($SQL)->execute();
+
+                        }
+                        $cart_for_change_winner[ $participant['cart'] ][ $participant['id'] ] = $max_result_user;
+                        $max_result_user = 0;
                     }
-                    $cart_for_change_winner[ $participant['cart'] ][ $participant['id'] ] = $max_result_user;
-                    $max_result_user = 0;
                 }
+                elseif($tour['registred_players'] == 1) // обрабатываем исключения, если тока 1 зареганный участник
+                {
+                    $got_prize = Tournaments::getTempPrizes(1);
+                    $SQL="UPDATE participants SET status = 1, place = 1, prize = {$got_prize}, balance = '{$tour[begin_stack]}' WHERE id_tournament = '{$tour[id]}' RETURNING id_client";
+                    $id_client_user = $connection->createCommand($SQL)->queryRow()['id_client'];
+
+                    if($got_prize > 0)
+                     {
+                        $SQL="UPDATE users SET balance = (balance + {$got_prize}) WHERE id = {$id_client_user}";
+                        $connection->createCommand($SQL)->execute();
+                     }
+                }
+
                  $next_level = $tour['level']+1;
 
-                 // var_dump($cart_for_change_winner);die();
+             
                 foreach($cart_for_change_winner as $oCart)
                 {
-                   
                     arsort($oCart);
                     
 
@@ -259,6 +285,8 @@ const TIME_SILINCE = 10; // in seconds
                     }
 
                     // назначаем победителем и пробрасываем в сл. раунд, сбрасывем баланс на начальный
+                    // var_dump($finish_level);
+                    // var_dump($id_participant_winner);
                     if($finish_level)
                     {
                         $got_prize = Tournaments::getTempPrizes(1);
