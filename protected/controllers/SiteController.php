@@ -23,24 +23,52 @@ class SiteController extends FrontController
 		);
 	}
 
-	public function actionTestNotification($type, $device_token)
+	// public function actionTestNotification($type, $device_token)
+	// {
+	// 	$push = new PushModel;
+	// 	$push->message = "Это тестовое сообщение!1232";
+	// 	switch ($type) {
+	// 		case 'ios':
+
+	// 			$push->addIOsDevices( $device_token );
+	// 				$push->DEBUG_MODE == PushModel::DEBUG_OFF;
+	// 			var_dump($push->sendPushIOs());
+	// 			break;
+			
+	// 		case 'android':
+	// 			 $push->addAndroidDevices( $device_token );
+	// 			 var_dump($push->sendPushAndroid());
+	// 			break;
+
+			
+	// 	}
+	// }
+
+	public function actionRecoveryPassword($active_key)
 	{
-		$push = new PushModel;
-		$push->message = "Это тестовое сообщение!1232";
-		switch ($type) {
-			case 'ios':
+		$recovery = RecoveryPasswords::model()->find("token = :token and time_request BETWEEN NOW() - interval '5 minute' and NOW() and status != :status",array(':token'=>$active_key, ':status'=>RecoveryPasswords::STATUS_USED));
 
-				$push->addIOsDevices( $device_token );
-					$push->DEBUG_MODE == PushModel::DEBUG_OFF;
-				var_dump($push->sendPushIOs());
-				break;
-			
-			case 'android':
-				 $push->addAndroidDevices( $device_token );
-				 var_dump($push->sendPushAndroid());
-				break;
-
-			
+		if (is_object($recovery)) {
+			$user = Users::model()->find("login = :login",array(':login'=>$recovery->mail));
+			$recovery->status = RecoveryPasswords::STATUS_ACTIVATED;
+			if(is_object($user))
+			{
+				if(isset($_POST['Users']))
+				{
+					$new_password = trim($_POST['Users']['new_password']);
+					if(!empty($new_password))
+					{
+						$user->password = md5($new_password);
+						if($user->update())
+						{
+							$recovery->status = RecoveryPasswords::STATUS_USED;
+							 Yii::app()->user->setFlash('RECOVERY_SUCCESS', Yii::t('main','password_reseted'));
+						}
+					}
+				}
+				$recovery->update();
+				$this->render("recovery");
+			}
 		}
 	}
 

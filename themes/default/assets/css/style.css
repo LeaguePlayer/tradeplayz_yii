@@ -84,7 +84,7 @@ a img {
 
 
 html {
-	background: url('../img/bg-pattern.jpg') repeat;
+	background: url('../img/bg.jpg') repeat;
 }
 
 body {
@@ -98,6 +98,48 @@ body {
 	width: 1000px;
 	margin: 0 auto;
 }
+.form_recovery input[type="text"]
+{
+    border: 2px solid #2d435b;
+    background: transparent;
+    height: 46px;
+    font-size: 16px;
+    color: #5480b0;
+    padding: 0 12px;
+    width: 350px;
+}
+.btn.red
+{
+	background: #ff4800;
+    color: #ffffff;
+}
+.logo, form.form_recovery
+{
+	text-align: center;
+}
+.message
+{
+	font-size: 24px;
+	color: #ff4800;
+	text-align: center;
+}
+.btn
+{
+	height: 46px;
+    padding: 0px 40px;
+    line-height: 36px;
+    cursor: pointer;
+    font-size: 17px;
+    border-radius: 0px;
+    border: none;
+    text-decoration: none;
+        display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+}
+
 
 .clear {
 	clear: both;

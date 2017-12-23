@@ -36,4 +36,16 @@
         "place" => 'place', 
         "lost_tour" => 'You won', 
         "money_get" => 'And got money', 
+        "user_not_exist" => 'User with such an email does not exist',
+
+        "status_recovery_created" => 'status_recovery_created', 
+        "status_recovery_activated" => 'status_recovery_activated', 
+        "status_recovery_used" => 'status_recovery_used', 
+        "message_not_sent" => 'Message could not be sent', 
+        "message_sent" => 'Message has been sent. Check you email!', 
+        "password_reseted" => 'Password changed', 
+
+
+        
+
 	);

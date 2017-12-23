@@ -102,7 +102,7 @@ return array_replace_recursive(
                 'rules'=>array(
                     'gii'=>'gii',
                     'admin'=>'admin/structure',
-                    // 'api/page/<alias>'=>'api/page',
+                    'recoveryPassword/<active_key>'=>'site/recoveryPassword',
                     // 'admin/<controller:!config>' => 'admin/<controller>/list',
                     // '/'=>'site/index',
                     // '<controller:page>/<url:[\w_-]+>' => '<controller>/view',
