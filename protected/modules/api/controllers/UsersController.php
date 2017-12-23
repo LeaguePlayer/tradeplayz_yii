@@ -7,13 +7,16 @@ class UsersController extends ApiController
 
 		$json = new JsonModel;
 
-		$urlAvatar = null;
+
+		$urlAvatar = $this->user->img_avatar;
 		if(!is_null($this->user->img_avatar))
 			{
 
-				$pos = strpos('http', $this->user->img_avatar);
+				$pos = strpos($this->user->img_avatar, 'http');
+			
 					if ($pos === false)
 						$urlAvatar = 'http://'.$_SERVER['HTTP_HOST'].$this->user->getImageUrl('small');
+
 
 			}
 			
