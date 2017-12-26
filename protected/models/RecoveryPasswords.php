@@ -92,7 +92,7 @@ class RecoveryPasswords extends EActiveRecord
     {
         $domain = 'http://dev.tradeplayz.com';
         // $domain = 'http://tpz.server.loc';
-        $url = "{$domain}/site/recoveryPassoword/?active_key={$this->token}";
+        $url = "{$domain}/site/RecoveryPassword/?active_key={$this->token}";
 
         return $url;
     }
