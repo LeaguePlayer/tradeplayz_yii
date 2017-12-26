@@ -44,6 +44,14 @@
         "message_not_sent" => 'Message could not be sent', 
         "message_sent" => 'Message has been sent. Check you email!', 
         "password_reseted" => 'Password changed', 
+        "recovery_password_message" => 'Hi there!<br>
+You have requested a password reset associated with this email address - {email}. To choose a new password, click this link and follow the instructions: <a href="{link}">{link}</a><br>
+The link will be valid until {date}
+<br><br>
+If you did not request a password reset – please ignore this email, it might have been sent to you by a mistake.
+<br><br>
+With regards,<br>
+TradePlayz Team', 
 
 
         

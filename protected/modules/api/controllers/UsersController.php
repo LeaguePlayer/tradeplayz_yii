@@ -50,8 +50,9 @@ class UsersController extends ApiController
 
 	public function actionForgotPassword( $email )
 	{
+		
 
-		//Load composer's autoloader
+
 		
 
 		$json = new JsonModel;
@@ -63,7 +64,6 @@ class UsersController extends ApiController
 		{
 			require dirname(__FILE__).'/../../../../vendor/autoload.php';
 			$mail = new PHPMailer\PHPMailer\PHPMailer(true);    // Passing `true` enables exceptions
-			// var_dump($mail);die();
 
 
 			//generate model recovery
@@ -80,35 +80,36 @@ class UsersController extends ApiController
 			if($recovery->save())
 			{
 				try {
-				    // //Server settings
-				    // $mail->SMTPDebug = 0;//2;                                 // Enable verbose debug output
-				    // $mail->isSMTP();                                      // Set mailer to use SMTP
-				    // $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-				    // $mail->SMTPAuth = true;                               // Enable SMTP authentication
-				    // $mail->Username = 'leonidminderov@gmail.com';                 // SMTP username
-				    // $mail->Password = '';                           // SMTP password
-				    // $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-				    // $mail->Port = 465;                                    // TCP port to connect to
+					$body = Yii::t('main', 'recovery_password_message',
+    					array(
+    						'{email}'=>$recovery->mail,
+    						'{link}'=>$recovery->getActiveLink(),
+    						'{date}'=>date("d.m.Y H:i"),
+    						)
+    					);
 
-				    // //Recipients
-				    // $mail->setFrom('leonidminderov@gmail.com', 'TradePlayz');
-				    // $mail->addAddress('minderov@amobile-studio.ru', 'Leonid');     // Add a recipient
-				    // // $mail->addAddress('ellen@example.com');               // Name is optional
-				    // // $mail->addReplyTo('info@example.com', 'Information');
-				    // // $mail->addCC('cc@example.com');
-				    // // $mail->addBCC('bcc@example.com');
+				    $mail->SMTPDebug = 0;//2;                                 // Enable verbose debug output
+				    $mail->isSMTP();                                      // Set mailer to use SMTP
+				    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+				    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+				    // $mail->Username = 'alexg@tradeplayz.com';                 // SMTP username
+				    // $mail->Password = 'hbjsfk7676YF465tgds89)';
+				    $mail->Username = 'leonidminderov@gmail.com';                 // SMTP username
+				    $mail->Password = 'qwelpo3452';                           // SMTP password
+				    $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+				    $mail->Port = 465;                                    // TCP port to connect to
 
-				    // //Attachments
-				    // // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-				    // // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+				    //Recipients
+				    $mail->setFrom('alex@tradeplayz.com', 'TradePlayz');
+				    $mail->addAddress($recovery->mail);     // Add a recipient
 
-				    // //Content
-				    // $mail->isHTML(true);                                  // Set email format to HTML
-				    // $mail->Subject = 'Here is the subject';
-				    // $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-				    // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+				    //Content
+				    $mail->isHTML(true);                                  // Set email format to HTML
+				    $mail->Subject = 'Recovery password TradePlayz';
+				    $mail->Body    = $body;
+				    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-				    // $mail->send();
+				    $mail->send();
 
 				    $result=Yii::t('main','message_sent');
 				} catch (PHPMailer\PHPMailer\Exception $e) {
