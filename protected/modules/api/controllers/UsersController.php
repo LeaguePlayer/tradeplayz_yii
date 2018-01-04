@@ -84,7 +84,7 @@ class UsersController extends ApiController
     					array(
     						'{email}'=>$recovery->mail,
     						'{link}'=>$recovery->getActiveLink(),
-    						'{date}'=>date("d.m.Y H:i"),
+    						'{date}'=>date("d.m.Y H:i", strtotime("+5 minute")),
     						)
     					);
 

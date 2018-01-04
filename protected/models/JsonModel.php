@@ -28,6 +28,14 @@ class JsonModel
 	}
 
 
+	public function justReturnItToJson($data)
+	{
+
+		header('Content-type: application/json');
+		echo CJSON::encode($data);
+	}
+
+
 
 
 	public function returnError($code)
