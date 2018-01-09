@@ -7,8 +7,9 @@ class ChartsController extends ApiController
 
 	public function actionGetChart()
 	{
-		$url_to_api_charts =  "http://dev.tradeplayz.com/api/charts";
-		// $url_to_api_charts =  "http://tpz.server.loc.192.168.88.23.xip.io/api/charts";
+
+		// $url_to_api_charts =  "http://dev.tradeplayz.com/api/charts";
+		$url_to_api_charts =  "http://tpz.server.loc.192.168.88.23.xip.io/api/charts";
 
 		$this->render("index", array(
 				'url_to_api_charts'=>$url_to_api_charts,
@@ -19,9 +20,6 @@ class ChartsController extends ApiController
 	// ?symbol=AAPL&resolution=D&from=1483877516&to=1514981576
 	public function actionHistory($symbol, $resolution, $from, $to)
 	{
-		// var_dump(strtotime("2018-01-07 16:00:00"));
-		// var_dump(strtotime("2018-01-07 17:00:00"));
-		// die();
 		$json = new JsonModel;
 		$data = array();
 
@@ -54,6 +52,84 @@ class ChartsController extends ApiController
 		
 			header('Access-Control-Allow-Origin: *');
 			$json->justReturnItToJson($data);
+
+	}
+
+
+	public function actionGetAllTrades()
+	{
+		// var_dump(array_keys($_POST['shapes']));die();
+
+		if(!is_null($this->user->active_participant->tournament))
+		{
+			$json = new JsonModel;
+			$data = array();
+			$shapes = array();
+
+			if(!empty($_POST['shapes']))
+			{
+				foreach(array_keys($_POST['shapes']) as $sh)
+					$shapes[] = date('Y-m-d H:i:s',$sh);
+			}
+			
+			// var_dump($shapes);die();
+			$criteria = new CDbCriteria;
+			$criteria->addCondition("id_tournament = :id_tour");
+
+			
+
+			$criteria->params[':id_tour'] = $this->user->active_participant->id_tournament;
+
+
+
+			if(!empty($shapes)){
+
+				$criteria->addNotInCondition("create_time", $shapes );
+
+				// var_dump($criteria);die();
+			}
+
+			$bets = TournamentBets::model()->findAll($criteria);
+
+			foreach($bets as $bet)
+			{
+				if($bet->id_type_bet == 0) // down
+					$type = "down";
+				else
+					$type = "up";
+
+				// var_dump($bet->id_participants);die();
+				if($this->user->active_participant->id == $bet->id_participants)
+					$name = "You";
+				else
+					$name = $this->user->firstname;
+
+				$sizing = number_format($bet->sizing, 0, ',', ' ');
+				$currency = "$";
+
+				$message = "{$name} bet {$type} {$currency}{$sizing}";
+
+				$data[] = array(
+						'time'=>strtotime($bet->create_time),
+						'text'=>$message,
+						'coord_y'=>$bet->value_when_was_bet,
+					);
+				
+			}
+			// var_dump($data);
+			// die();
+
+			//return
+			$json->registerResponseObject('trades', $data);
+			$json->returnJson();
+
+			// header('Access-Control-Allow-Origin: *');
+			// $json->justReturnItToJson($data);
+		}
+
+		
+		
+		
 
 	}
 
@@ -168,7 +244,7 @@ class ChartsController extends ApiController
 		$data = array(
 				"supports_search"=> true,
 				  "supports_group_request"=> true,
-				  "supports_marks"=> true,
+				  "supports_marks"=> false,
 				  "supports_timescale_marks"=> false,
 				  "supports_time"=> true,
 				  "exchanges"=> [

@@ -1,6 +1,6 @@
 <div id="tv_chart_container"></div>
 		<script type="text/javascript">
-
+			var shapes = {};
 			$(document).ready(function(){
 				function getParameterByName(name) {
 			    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -61,7 +61,50 @@
 						widget.chart().setVisibleRange({from: <? echo time(); ?>, to: <? echo strtotime("+1 minute"); ?>}, function(){
 							console.log('changed_visible');
 						});
-						console.log(widget.chart());
+						
+						setInterval(function(){
+							
+
+							
+
+							$.ajax({
+							      url: "/api/charts/getAllTrades?token=<? echo $this->token; ?>",
+							      dataType: 'json',
+							      type: 'POST',
+							      data: {
+							        shapes: window.shapes
+							      },
+							      success: function(data) {
+								      	if(data.result == 1)
+								      	{
+								      		$.each(data.response.trades,function(i,v){
+								      				var gotTime = v.time;
+													console.log( widget.chart().getAllShapes() );
+													
+													var id_chart = widget.chart().createShape({time: gotTime, price: v.coord_y},
+							                            {
+							                                shape: "balloon",
+							                                lock: true,
+							                                disableSelection: true,
+							                                disableSave: true,
+															disableUndo: true,
+															showInObjectsTree: false,
+							                                text: v.text,
+							                                overrides: { backgroundColor: "#ffffff", fontsize: 11, fontWeight: 400,  }
+							                            });
+													console.log(id_chart);
+
+													
+													if(window.shapes[gotTime] === undefined)
+														window.shapes[gotTime] = id_chart;
+													else
+														widget.chart().removeEntity( id_chart );
+								      		});
+								      	}
+							      }
+							    });
+
+						},5000)
 				});
 
 			})
