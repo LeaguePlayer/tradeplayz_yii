@@ -1,0 +1,8 @@
+.chart-page .chart-container
+{
+	border: 1px solid #111820;
+}
+body ._tv-dialog
+{
+	display: none !important;
+}

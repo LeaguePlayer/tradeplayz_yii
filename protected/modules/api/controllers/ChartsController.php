@@ -18,7 +18,9 @@ class ChartsController extends ApiController
 	// ?symbol=AAPL&resolution=D&from=1483877516&to=1514981576
 	public function actionHistory($symbol, $resolution, $from, $to)
 	{
-		// var_dump(strtotime("2018-01-04 17:08:16"));die();
+		// var_dump(strtotime("2018-01-07 16:00:00"));
+		// var_dump(strtotime("2018-01-07 17:00:00"));
+		// die();
 		$json = new JsonModel;
 		$data = array();
 
@@ -68,7 +70,7 @@ class ChartsController extends ApiController
 				  "minmov" => 1,
 				  "minmov2" => 0,
 				  "pointvalue" => 1,
-				  "session" => "0930-1630",
+				  "session" => "1558-1600",
 				  "has_intraday" => false,
 				  "has_no_volume" => false,
 				  "description" => "Bitcoin",
@@ -122,21 +124,29 @@ class ChartsController extends ApiController
 		
 		$data = array(
 			
-				     "symbol"=> ["BTC", "MSFT", "SPX"],
-             "description"=> ["Bitcoin", "Microsoft corp", "S&P 500 index"],
+				     "symbol"=> ["BTC"],
+             "description"=> ["Bitcoin"],
              "exchange-listed"=> "NYSE",
              "exchange-traded"=> "NYSE",
              "minmovement"=> 1,
              "minmovement2"=> 0,
-             "pricescale"=> [1, 1, 100],
+             "pricescale"=> [100],
              "has-dwm"=> true,
              "has-intraday"=> true,
-             "has-no-volume"=> [false, false, true],
-             "type"=> ["stock", "stock", "index"],
-             "ticker"=> ["BTC~0", "MSFT~0", "$SPX500"],
+ 
+             "has_empty_bars"=> [false],
+             "has-empty-bars"=> [false],
+             "has-no-volume"=> [false],
+             "type"=> ["stock"],
+             "ticker"=> ["BTC~0"],
+             "expiration_date"=>[true],
              "timezone"=> "America/New_York",
-             "session-regular"=> "0900-1600",
+             "session-regular"=> ["1558-1800"],
              // "supported-resolutions"=> ["1S"],
+             "supported_resolutions"=> [
+				    // "1S",
+				    "D",
+				  ]
 			);
 
 		header('Access-Control-Allow-Origin: *');
@@ -157,7 +167,7 @@ class ChartsController extends ApiController
 		$data = array(
 				"supports_search"=> true,
 				  "supports_group_request"=> true,
-				  "supports_marks"=> false,
+				  "supports_marks"=> true,
 				  "supports_timescale_marks"=> false,
 				  "supports_time"=> true,
 				  "exchanges"=> [
@@ -226,36 +236,110 @@ class ChartsController extends ApiController
 		$data = array(
 				"id"=> [
 					    0,
-					    1,
+					    // 1,
+					    // 2,
+					    // 3,
+					    // 4,
+					    // 5,6,7,8,9,10,11,12,13
+
 					  ],
 					  "time"=> [
-					    1515066119,
-					    1515066119,
-					    // 1514678400,
-					    // 1514419200,
-					    // 1514419200,
-					    // 1513728000,
-					    // 1512432000
+					    1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515066367,
+					    // 1515067696,
+					    // 1515067696,
+					    // 1515067696,
+					    // 1515067696,
 					  ],
 					  "color"=> [
 					    "green",
-					    "red",
+					    // "red",
+					    //   "green",
+					    // "red",
+					    //   "green",
+					    // "red",
+					    //   "green",
+					    // "red",
+					    //   "green",
+					    // "red",
+					    //   "green",
+					    // "red",  
+					    // "green",
+					    // "red",
 					  ],
 					  "text"=> [
-					    "Today",
-					    "Today",
+					    "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
+					    // "Today <strong>Leonid</strong>",
+					    // "NOBODY",
 					  ],
 					  "label"=> [
 					    "LM",
-					    "YS",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
+					    // "LM",
+					    // "YS",
 					  ],
 					  "labelFontColor"=> [
 					    "white",
-					    "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
+					    // "white",
 					  ],
 					  "minSize"=> [
 					    6,
-					    6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 6,
+					    // 16,
+					    // 2,
+					    // 1,
+					    // 24,
 					  ]
 			);
 
