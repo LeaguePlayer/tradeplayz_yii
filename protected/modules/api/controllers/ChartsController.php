@@ -7,7 +7,8 @@ class ChartsController extends ApiController
 
 	public function actionGetChart()
 	{
-		$url_to_api_charts =  "http://tpz.server.loc.192.168.88.23.xip.io/api/charts";
+		$url_to_api_charts =  "http://dev.tradeplayz.com/api/charts";
+		// $url_to_api_charts =  "http://tpz.server.loc.192.168.88.23.xip.io/api/charts";
 
 		$this->render("index", array(
 				'url_to_api_charts'=>$url_to_api_charts,

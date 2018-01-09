@@ -397,8 +397,9 @@ Datafeeds.UDFCompatibleDatafeed.prototype.unsubscribeBars = function(listenerGUI
 };
 
 Datafeeds.UDFCompatibleDatafeed.prototype.calculateHistoryDepth = function(period, resolutionBack, intervalBack) {
+	// console.log("calculateHistoryDepth");
 	  return {
-            resolutionBack: 'M',
+            resolutionBack: 'D',
             intervalBack: 1
         };
 };

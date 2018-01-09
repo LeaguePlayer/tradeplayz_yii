@@ -20,7 +20,7 @@
 					container_id: "tv_chart_container",
 					loading_screen: { backgroundColor: "#000000", foregroundColor: "#000000" },
 
-					datafeed: new Datafeeds.UDFCompatibleDatafeed("<? echo $url_to_api_charts; ?>"),
+					datafeed: new Datafeeds.UDFCompatibleDatafeed("<? echo $url_to_api_charts; ?>",1000),
 					library_path: "<? echo $this->getAssetsUrl(); ?>/charting_library/",
 					locale: "en",
 					custom_css_url: "<? echo $this->getAssetsUrl(); ?>/charting_library/css/chart.css",
@@ -58,7 +58,7 @@
 				});
 
 				widget.onChartReady(function() {
-						widget.chart().setVisibleRange({from: 1515322800, to:1515326400}, function(){
+						widget.chart().setVisibleRange({from: <? echo time(); ?>, to: <? echo strtotime("+1 minute"); ?>}, function(){
 							console.log('changed_visible');
 						});
 						console.log(widget.chart());
