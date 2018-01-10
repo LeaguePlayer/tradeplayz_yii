@@ -59,7 +59,8 @@ class TournamentBets extends EActiveRecord
 
         if($this->isNewRecord)
         {
-            $this->value_when_was_bet = $this->actualGraphData();
+            $this->value_when_was_bet = $this->actualGraphData()->coord_y;
+            $this->create_time = $this->actualGraphData()->coord_x;
             return true;
         }
         else return false;
@@ -75,7 +76,7 @@ class TournamentBets extends EActiveRecord
                 'params'=>array(':time_bet'=>$this->create_time),
             ));
 
-        return $graph->coord_y;
+        return $graph;
     }
 
     public function search()

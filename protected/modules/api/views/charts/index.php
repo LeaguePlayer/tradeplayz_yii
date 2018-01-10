@@ -58,14 +58,27 @@
 				});
 
 				widget.onChartReady(function() {
-						widget.chart().setVisibleRange({from: <? echo time(); ?>, to: <? echo strtotime("+1 minute"); ?>}, function(){
-							console.log('changed_visible');
-						});
+						// widget.chart().setVisibleRange({from: <? echo time(); ?>, to: <? echo strtotime("+1 minute"); ?>}, function(){
+						// 	console.log('changed_visible');
+						// });
+
+						var id_chart = widget.chart().createShape({time: <? echo time(); ?>, price: 18825},
+							                            {
+							                                shape: "arrow_up",
+							                                lock: true,
+							                                disableSelection: true,
+							                                disableSave: true,
+															disableUndo: true,
+															showInObjectsTree: false,
+							                                text: "Leonid UP to $2300",
+							                                overrides: { backgroundColor: "#ffffff", fontsize: 11, fontWeight: 400,  }
+							                            });
+
+						// widget.chart().setResolution("5S",function(){
+						// 	console.log('setResolution ready');
+						// });
 						
 						setInterval(function(){
-							
-
-							
 
 							$.ajax({
 							      url: "/api/charts/getAllTrades?token=<? echo $this->token; ?>",

@@ -20,7 +20,7 @@ class GetGraphCommand extends CConsoleCommand {
       
 
         $SQL="INSERT INTO graph (id_currency, id_currency_to, coord_x, coord_y) VALUES ({$id_currency}, {$id_currency_to}, '{$time_now}', '{$value}')";
-		$connection=Yii::app()->db; 
+		$command=$connection->createCommand($SQL);
 		
 		$command->execute(); // execute the non-query SQL
 

@@ -153,6 +153,7 @@ class ChartsController extends ApiController
 				  "description" => "Bitcoin",
 				  "type" => "stock",
 				  "supported_resolutions" => [
+				    "15S",
 				    "D",
 				    "2D",
 				    "3D",
@@ -222,7 +223,7 @@ class ChartsController extends ApiController
              // "supported-resolutions"=> ["1S"],
              "supported_resolutions"=> [
 				    // "1S",
-				    "D",
+				    "15S",
 				  ]
 			);
 
