@@ -59,8 +59,9 @@ class TournamentBets extends EActiveRecord
 
         if($this->isNewRecord)
         {
-            $this->value_when_was_bet = $this->actualGraphData()->coord_y;
-            $this->create_time = $this->actualGraphData()->coord_x;
+            $last_graph = $this->actualGraphData();
+            $this->value_when_was_bet = $last_graph->coord_y;
+            $this->create_time = $last_graph->coord_x;
             return true;
         }
         else return false;
@@ -71,6 +72,7 @@ class TournamentBets extends EActiveRecord
     public function actualGraphData() // функцицию надо расширить, когда будут появляться другие валюты для игры!!
     {
         $graph = Graph::model()->find(array(
+                'select'=>'DISTINCT ON (coord_x) coord_x, coord_y',
                 'order'=>"coord_x DESC",
                 'condition'=>"coord_x <= :time_bet",
                 'params'=>array(':time_bet'=>$this->create_time),

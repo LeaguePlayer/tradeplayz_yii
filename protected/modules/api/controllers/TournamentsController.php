@@ -430,7 +430,7 @@ class TournamentsController extends ApiController
 					$bet->id_type_bet = $id_type_bet;
 					$bet->sizing = $sizing;
 					$bet->id_tournament = $this->user->active_participant->tournament->id;
-					// $bet->create_time = date("Y-m-d H:i:s");
+					$bet->create_time = date("Y-m-d H:i:s");
 					
 
 					

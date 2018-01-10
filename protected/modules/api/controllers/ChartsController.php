@@ -94,9 +94,15 @@ class ChartsController extends ApiController
 			foreach($bets as $bet)
 			{
 				if($bet->id_type_bet == 0) // down
+				{
 					$type = "down";
+					$arrow = "arrow_down";
+				}
 				else
+				{
 					$type = "up";
+					$arrow = "arrow_up";
+				}
 
 				// var_dump($bet->id_participants);die();
 				if($this->user->active_participant->id == $bet->id_participants)
@@ -113,6 +119,7 @@ class ChartsController extends ApiController
 						'time'=>strtotime($bet->create_time),
 						'text'=>$message,
 						'coord_y'=>$bet->value_when_was_bet,
+						'arrow'=>$arrow,
 					);
 				
 			}
