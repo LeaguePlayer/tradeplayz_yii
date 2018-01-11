@@ -385,7 +385,7 @@ class TournamentsController extends ApiController
 				$message .= " {$participant->prize} TPZ.";
 
 				$json->error_text=$message;
-				$json->returnError(JsonModel::CUSTOM_ERROR);
+				$json->returnError(JsonModel::CUSTOM_MESSAGE_ERROR);
 				return true;
 			}
 			else

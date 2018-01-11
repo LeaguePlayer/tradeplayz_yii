@@ -79,6 +79,7 @@ class JsonModel
 	const RETURN_NULL = 200;
 
 	const CUSTOM_ERROR = 500;
+	const CUSTOM_MESSAGE_ERROR = 501;
 
 	protected function getErrorByCode($code)
 	{
