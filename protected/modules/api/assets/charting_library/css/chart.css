@@ -2,7 +2,7 @@
 {
 	border: 1px solid #111820;
 }
-body ._tv-dialog
+body ._tv-dialog, body .tv-floating-toolbar
 {
 	display: none !important;
 }

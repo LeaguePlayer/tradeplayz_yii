@@ -1,6 +1,43 @@
 <div id="tv_chart_container"></div>
+<div id="bottom_nav">
+	<ul id="menu">
+	    <li>
+	        <a class="charts" href="javascript:void(0);"></a>
+	        <ul>
+	            <li><a href="javascript:void(0);" onclick="window.globalWidget.chart().setChartType(3)">Area</a></li>
+	            <li><a href="javascript:void(0);" onclick="window.globalWidget.chart().setChartType(0)">Bars</a></li>
+	            <li><a href="javascript:void(0);" onclick="window.globalWidget.chart().setChartType(1)">Candles</a></li>
+	            <li><a href="javascript:void(0);" onclick="window.globalWidget.chart().setChartType(2)">Line</a></li>
+	            <li><a href="javascript:void(0);" onclick="window.globalWidget.chart().setChartType(8)">Heiken Ashi</a></li>
+	        </ul>
+	    </li>
+	    <li>
+	        <a class="indicators" href="javascript:void(0);"></a>
+	        <ul>
+	            <li><a href="javascript:void(0);" onclick="makeIndicator('Moving Average')">Moving Average</a></li>
+	            <li><a href="javascript:void(0);" onclick="makeIndicator('Bollinger Bands')">Bollinger Bands</a></li>
+	            <li><a href="javascript:void(0);" onclick="makeIndicator('Williams Alligator')">Alligator</a></li>
+	            <li><a href="javascript:void(0);" onclick="makeIndicator('Relative Strength Index')">RSI</a></li>
+	        </ul>
+	    </li>
+	    <li>
+	        <a class="lines" href="javascript:void(0);"></a>
+	        <ul>
+	            <li><a href="javascript:void(0);" onclick="makeHorizontalLine()">Horizontal line</a></li>
+	            <li><a href="javascript:void(0);" onclick="makeVerticalLine()">Vertical line</a></li>
+	            <li><a href="javascript:void(0);" onclick="makeRay()">Ray</a></li>
+	        </ul>
+	    </li>
+	    <li>
+	        <a class="erase" href="javascript:void(0);" data-event="showObjectsTree"></a>
+	    </li>
+	</ul>
+</div>
+
+
 		<script type="text/javascript">
 			var shapes = {};
+			var globalWidget = null;
 			$(document).ready(function(){
 				function getParameterByName(name) {
 			    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -12,7 +49,9 @@
 			TradingView.onready(function()
 			{
 				var widget = new TradingView.widget({
-					fullscreen: true,
+					// fullscreen: true,
+					width:"100%",
+					height:"100%",
 					symbol: 'BTC',
 					interval: 'D',
 					debug: false,
@@ -53,26 +92,22 @@
 						"paneProperties.bottomMargin": 20,
 						"scalesProperties.scaleSeriesOnly": true,
 						"scalesProperties.fontSize": 8,
+						"mainSeriesProperties.lineStyle.color": "rgba(254,73,9,1)",
+						"mainSeriesProperties.lineStyle.linewidth": 2,
+						
 
 					}
 				});
 
 				widget.onChartReady(function() {
+						window.globalWidget = widget;
 						// widget.chart().setVisibleRange({from: <? echo time(); ?>, to: <? echo strtotime("+1 minute"); ?>}, function(){
 						// 	console.log('changed_visible');
 						// });
 
-						// var id_chart = widget.chart().createShape({time: <? echo time(); ?>, price: 18825},
-						// 	                            {
-						// 	                                shape: "arrow_up",
-						// 	                                lock: true,
-						// 	                                disableSelection: true,
-						// 	                                disableSave: true,
-						// 									disableUndo: true,
-						// 									showInObjectsTree: false,
-						// 	                                text: "Leonid UP to $2300",
-						// 	                                overrides: { backgroundColor: "#ffffff", fontsize: 11, fontWeight: 400,  }
-						// 	                            });
+						// widget.chart().setChartType(8)
+
+						 
 
 						// widget.chart().setResolution("5S",function(){
 						// 	console.log('setResolution ready');

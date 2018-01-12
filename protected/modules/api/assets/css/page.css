@@ -1,0 +1,238 @@
+body,html
+{
+	min-height: 100%;
+	height: 100%;
+	background: transparent;
+}
+#bottom_nav
+{
+	height:60px;
+	width:100%;
+	background:rgba(0,0,0,0.25);
+	left:0px;
+	bottom:0px;
+}
+#tv_chart_container
+{
+	height: calc(100% - 60px);
+}
+/* Main */
+#menu {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;  
+    height: 100%;
+   
+}
+
+#menu li {
+    float: left;
+
+    position: relative;
+    height: 100%;
+    line-height: 60px;
+        text-align: center;
+    width: 25%;
+}
+
+#menu a {
+    float: none;
+     height: 100%;
+    line-height: 60px;
+    display: inline;
+    margin: 0 25px;
+    color: #999;
+    text-transform: uppercase;
+    font: bold 12px/25px Arial, Helvetica;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #000;
+    margin-top: 11px;
+}
+
+#menu li.active > a {
+    color: #fafafa;
+}
+
+*html #menu li a:hover { /* IE6 */
+    color: #fafafa;
+}
+
+#menu li.active > ul {
+    display: block;
+    left: 50%;
+    margin-left: -64px;
+}
+
+/* Sub-menu */
+#menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;    
+    display: none;
+    position: absolute;
+    bottom: 88%;
+    left: 0;
+    z-index: 99999;    
+    background-color: #444;   
+    background-image: linear-gradient(#444, #111);    
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#menu ul li {
+    float: none;
+    margin: 0;
+    padding: 0;
+    display: block;  
+    width: 100%;
+    box-shadow: 0 1px 0 #111111, 
+                0 2px 0 #777777;
+}
+#menu ul li ul li a
+{
+	margin: 0;
+}
+#menu ul li:last-child { 
+    box-shadow: none;    
+}
+
+#menu ul a {    
+    padding: 10px;
+    height: auto;
+    line-height: 1;
+    display: block;
+    white-space: nowrap;
+    float: none;
+    text-transform: none;
+    margin: 0;
+}
+
+*html #menu ul a { /* IE6 */   
+    height: 10px;
+    width: 150px;
+}
+
+*:first-child+html #menu ul a { /* IE7 */    
+    height: 10px;
+    width: 150px;
+}
+
+#menu ul a:hover {
+    background-color: #0186ba;
+    background-image: linear-gradient(#04acec, #0186ba);
+}
+
+#menu ul li:first-child a {
+    border-radius: 5px 5px 0 0;
+}
+
+#menu ul li:last-child a:after {
+    content: '';
+    position: absolute;
+
+    bottom: -8px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid #111;
+        left: 50%;
+    margin-left: -5px;
+}
+
+#menu ul li:first-child a:hover:after {
+    border-bottom-color: #04acec; 
+}
+
+#menu ul li:last-child a {
+    border-radius: 0 0 5px 5px;
+}
+
+/* Clear floated elements */
+#menu:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+* html #menu             { zoom: 1; } /* IE6 */
+*:first-child+html #menu { zoom: 1; } /* IE7 */
+
+/*#menu ul li:first-child a:after {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: -8px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #444;
+}*/
+
+#menu ul li:first-child a:hover:after {
+    border-bottom-color: #04acec; 
+}
+
+#menu .charts
+{
+	    transform: scale(0.5);
+	background: url(../img/buttons.png) left top no-repeat;
+	height: 38px;
+	width:38px;
+	display: inline-block;
+}
+#menu ul li
+{
+	    min-width: 128px;
+}
+#menu .active .charts
+{
+	background-position: left bottom;
+
+}
+#menu .lines
+{
+	    transform: scale(0.5);
+	background: url(../img/buttons.png) -38px top no-repeat;
+	height: 42px;
+	width:42px;
+	display: inline-block;
+}
+#menu .active .lines
+{
+	background-position: -38px bottom;
+
+}
+#menu .erase
+{
+	    transform: scale(0.5);
+	background: url(../img/buttons.png) -130px top no-repeat;
+	height: 42px;
+	width:40px;
+	display: inline-block;
+}
+#menu .active .erase
+{
+	background-position: -130px bottom;
+
+}
+#menu .indicators
+{
+	    transform: scale(0.5);
+	background: url(../img/buttons.png) -80px top no-repeat;
+	height: 24px;
+	width:50px;
+	display: inline-block;
+	position: relative;
+	top:8px;
+}
+#menu .active .indicators
+{
+	background-position: -80px bottom;
+
+}

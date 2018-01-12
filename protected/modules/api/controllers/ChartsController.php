@@ -16,6 +16,26 @@ class ChartsController extends ApiController
 			));
 	}
 
+	public function actionGetLastGraph()
+	{
+		$json = new JsonModel;
+		$now = date('Y-m-d H:i:s');
+		 $SQL="SELECT coord_x,coord_y FROM graph ORDER BY coord_x DESC LIMIT 1";
+		$connection=Yii::app()->db; 
+		$command=$connection->createCommand($SQL);
+		$row = $command->queryRow();
+
+		$row['coord_x_2'] = strtotime("-1 minute ".$row['coord_x']);
+		$row['coord_y_2'] = round($row['coord_y'] - ($row['coord_y']*0.1));
+			
+		$row['coord_x'] = strtotime($row['coord_x']);
+		$row['coord_y'] = round($row['coord_y']);
+
+		
+
+		$json->justReturnItToJson( $row );
+	}
+
 
 	// ?symbol=AAPL&resolution=D&from=1483877516&to=1514981576
 	public function actionHistory($symbol, $resolution, $from, $to)
@@ -30,7 +50,6 @@ class ChartsController extends ApiController
 		// var_dump($to);
 
 	    $SQL="SELECT coord_x as t, coord_y as c FROM graph WHERE coord_x BETWEEN '{$from}' and '{$to}'";
-	   // die();
 		$connection=Yii::app()->db; 
 		$command=$connection->createCommand($SQL);
 		$predate = $command->queryAll(); // execute the non-query SQL
@@ -437,7 +456,7 @@ class ChartsController extends ApiController
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('history', 'symbols', 'symbol_info','config', 'time', 'marks', 'timescale_marks'),
+				'actions'=>array('history', 'symbols', 'symbol_info','config', 'time', 'marks', 'timescale_marks', 'getLastGraph'),
 			),
 		);
 	}
