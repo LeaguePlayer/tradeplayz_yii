@@ -194,10 +194,17 @@ class ChartsController extends ApiController
 				
 						$tour_begin_time = strtotime("+1 minute ".$tournament->dttm_begin); // это та минута, которая в холостую простаивает после начала турнира, т.к. подготовительная
 	            		$time_to_finish_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND) + ( ($tournament->level-1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
+	            		// $time_to_finish_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND) + ( ($tournament->level-1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
 
 						$modal_data['show']=true;
 						$modal_data['title']=Yii::t('main','at_start_round'); // free win time
-						$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
+
+						if($tournament->status  == Tournaments::STATUS_PREPARATION)
+							$time_time_show_modal = $tour_begin_time;
+						else
+							$time_time_show_modal = $time_to_finish_round_timestamp;
+
+							$modal_data['timer']=date('Y/m/d H:i:s',$time_time_show_modal);
 						//preparation. we have info about enemy or freewin
 
 						if($tournament->paused == 2) // now break
