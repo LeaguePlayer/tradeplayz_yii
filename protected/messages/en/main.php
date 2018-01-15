@@ -56,6 +56,7 @@ TradePlayz Team',
 "at_start_round" => 'Time to the start of the round', 
 "at_start_tour" => 'Time to the start of the tournament', 
 "now_break_round" => 'Now breaking. Time to start round', 
+"time_round" => 'Time to finish round', 
 
 
         

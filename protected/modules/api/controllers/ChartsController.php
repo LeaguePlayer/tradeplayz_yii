@@ -182,7 +182,7 @@ class ChartsController extends ApiController
 								$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
 
 								$modal_data['show']=true;
-								$modal_data['title']=Yii::t('main','at_start_round');
+								$modal_data['title']=Yii::t('main','time_round');
 								// i have freewin
 								$modal_data['content'] = "You have freewin";
 							}
@@ -246,6 +246,7 @@ class ChartsController extends ApiController
 								$time_to_ready_next_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND + GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS) + ( ($tournament->level -1-1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
 
 								$modal_data['timer']=date('Y/m/d H:i:s',$time_to_ready_next_round_timestamp);
+								$modal_data['title']=Yii::t('main','time_round');
 								$modal_data['content'] = "You have freewin";
 							}
 							// else
