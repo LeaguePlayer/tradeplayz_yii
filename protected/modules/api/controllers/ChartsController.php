@@ -96,17 +96,21 @@ class ChartsController extends ApiController
 			
 			// var_dump($shapes);die();
 			$criteria = new CDbCriteria;
-			$criteria->addCondition("id_tournament = :id_tour");
+			$criteria->addCondition("t.id_tournament = :id_tour and level = :level and cart = :cart");
 
 			
 
 			$criteria->params[':id_tour'] = $this->user->active_participant->id_tournament;
+			$criteria->params[':level'] = $this->user->active_participant->level;
+			$criteria->params[':cart'] = $this->user->active_participant->cart;
+
+			$criteria->join = ' inner join "participants" "p" on p.id = t.id_participants';
 
 
 
 			if(!empty($shapes)){
 
-				$criteria->addNotInCondition("create_time", $shapes );
+				$criteria->addNotInCondition("t.create_time", $shapes );
 
 				// var_dump($criteria);die();
 			}
@@ -126,11 +130,11 @@ class ChartsController extends ApiController
 					$arrow = "arrow_up";
 				}
 
-				// var_dump($bet->id_participants);die();
+				// var_dump($bet->id_participants);
 				if($this->user->active_participant->id == $bet->id_participants)
 					$name = "You";
 				else
-					$name = $this->user->firstname;
+					$name = $bet->participant->user->firstname;
 
 				$sizing = number_format($bet->sizing, 0, ',', ' ');
 				$currency = "$";
@@ -145,7 +149,7 @@ class ChartsController extends ApiController
 					);
 				
 			}
-
+// die();
 
 
 			//work with modal
@@ -167,6 +171,22 @@ class ChartsController extends ApiController
 					{
 						$modal_data['show']=false;
 						// die('running or silince');
+						if($tournament->level  !=  $this->user->active_participant->level)
+						{
+							if( $this->user->active_participant->status == Participants::STATUS_STILL_PLAY )
+							{
+
+								$tour_begin_time = strtotime("+1 minute ".$tournament->dttm_begin); // это та минута, которая в холостую простаивает после начала турнира, т.к. подготовительная
+			            		$time_to_finish_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND) + ( ($tournament->level - 1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
+
+								$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
+
+								$modal_data['show']=true;
+								$modal_data['title']=Yii::t('main','at_start_round');
+								// i have freewin
+								$modal_data['content'] = "You have freewin";
+							}
+						}
 					}
 					else
 					{
@@ -179,7 +199,15 @@ class ChartsController extends ApiController
 						$modal_data['title']=Yii::t('main','at_start_round');
 						$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
 						//preparation. we have info about enemy or freewin
-						if($tournament->level  ==  $this->user->active_participant->level) // i have enemies
+
+						if($tournament->paused == 2) // now break
+						{
+							$modal_data['title']=Yii::t('main','now_break_round');
+							$got_level = $tournament->level + 1;
+						}
+						else $got_level = $tournament->level;
+
+						if($got_level  ==  $this->user->active_participant->level) // i have enemies
 						{
 							$all_players = Participants::model()->findAll("id_tournament = :id_tournament and level = :level and cart = :cart", array(
 									':id_tournament'=>$this->user->active_participant->id_tournament,
@@ -205,8 +233,10 @@ class ChartsController extends ApiController
 							if( $this->user->active_participant->status == Participants::STATUS_STILL_PLAY )
 							{
 								// i have freewin
+								// $time_to_finish_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND) + ( ($tournament->level -1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
+
+								$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
 								$modal_data['content'] = "You have freewin";
-								// die("i have freewin");
 							}
 							// else
 							// 	die("i lost");

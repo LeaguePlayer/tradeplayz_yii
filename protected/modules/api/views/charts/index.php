@@ -163,9 +163,10 @@
 													$scores.find(".top_title").html( data.response.modal.title );
 													$scores.find(".round_players").html( data.response.modal.content );
 
-													if(data.response.modal.timer != $scores.find(".counter").data('countdown'))
+													if(data.response.modal.timer !== undefined && data.response.modal.timer != $scores.find(".counter").data('countdown'))
 													{
 														$scores.find(".counter").attr( "data-countdown", data.response.modal.timer );
+
 														  $scores.find(".counter").countdown(data.response.modal.timer, function(event) {
 														    $this.html(event.strftime('%H:%M:%S'));
 														  });
