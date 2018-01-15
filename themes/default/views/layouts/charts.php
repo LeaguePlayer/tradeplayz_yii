@@ -7,6 +7,7 @@
 	$cs->registerCoreScript('jquery');
 	$cs->registerScriptFile($this->getAssetsUrl().'/charting_library/charting_library.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile($this->getAssetsUrl().'/charting_library/datafeed/udf/datafeed.js', CClientScript::POS_END);
+	$cs->registerScriptFile($this->getAssetsUrl().'/js/jquery.countdown.js', CClientScript::POS_END);
 	$cs->registerScriptFile($this->getAssetsUrl().'/js/page.js', CClientScript::POS_END);
 ?><!DOCTYPE html>
 <html>

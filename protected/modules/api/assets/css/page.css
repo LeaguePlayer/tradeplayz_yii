@@ -4,6 +4,61 @@ body,html
 	height: 100%;
 	background: transparent;
 }
+#scores
+{
+    position: absolute;
+    z-index: 10;
+    width: 80%;
+    background: rgba(255,255,255,0.9);
+    top:40%;
+    margin-top: -125px;
+    left:5%;
+
+    height: 260px;
+    padding: 25px;
+}
+#scores .counter
+{
+    font-size: 22px;
+    text-align: center;
+    font-family: bold;
+}
+#scores .top_title
+{
+    font-size: 18px;
+    text-align: center;
+}
+#scores
+{
+    display: none;
+}
+#scores .round_players .versus
+{
+    font-size: 16px;
+    color: #6C7A89;
+    text-indent: 46px;
+    padding: 6px 0;
+}
+#scores .round_players
+{
+    margin-top: 10px;
+}
+#scores .round_players .versus:last-child
+{
+    display: none;
+}
+#scores .round_players .player img
+{
+    border-radius: 999px;
+    width: 55px;
+    height: 55px;
+    float: left;
+}
+#scores .round_players .player .player_name
+{
+    font-size: 16px;
+    font-weight: bold;
+}
 #bottom_nav
 {
 	height:60px;

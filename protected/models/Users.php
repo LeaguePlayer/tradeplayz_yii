@@ -61,6 +61,48 @@ class Users extends EActiveRecord
         );
     }
 
+    public function getAvatar($version = "small")
+    {
+       
+
+        $urlAvatar = $this->img_avatar;
+        if(!is_null($this->img_avatar))
+            {
+
+                $pos = strpos($this->img_avatar, 'http');
+            
+                    if ($pos === false)
+                        $urlAvatar = $this->getImageUrl( $version );
+
+
+            }
+            else
+                $urlAvatar = $this->getAssetsUrl()."/img/noavatar.png";
+
+        return $urlAvatar;
+    }
+
+    public function getFullName()
+    {
+        $fullName = "";
+
+        $firstname = "";
+        $lastname = "";
+
+        if(!empty($this->firstname) && !is_null($this->firstname))
+            $firstname = $this->firstname;
+
+        if(!empty($this->lastname) && !is_null($this->lastname))
+            $lastname = $this->lastname;
+
+        $fullName = trim( "{$lastname} {$firstname}" );
+
+        if( empty($fullName) )
+            $fullName = $this->email;
+
+        return $fullName;
+    }
+
 
     public function relations()
     {

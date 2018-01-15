@@ -1,3 +1,8 @@
+<div id="scores">
+	<div class="top_title"><? echo Yii::t('main','at_start_tour'); ?></div>
+	<div class="counter" data-countdown="<? echo date("Y/m/d H:i:s",strtotime($this->user->active_participant->tournament->dttm_begin)); ?>"></div>
+	<div class="round_players"></div>
+</div>
 <div id="tv_chart_container"></div>
 <div id="bottom_nav">
 	<ul id="menu">
@@ -149,6 +154,31 @@
 													else
 														widget.chart().removeEntity( id_chart );
 								      		});
+
+											if(data.response.modal)
+											{
+												var $scores = $('#scores');
+												if(data.response.modal.show)
+												{
+													$scores.find(".top_title").html( data.response.modal.title );
+													$scores.find(".round_players").html( data.response.modal.content );
+
+													if(data.response.modal.timer == $scores.find(".counter").data('countdown'))
+													{
+														$scores.find(".counter").attr( "data-countdown", data.response.modal.timer );
+														  $scores.find(".counter").countdown(data.response.modal.timer, function(event) {
+														    $this.html(event.strftime('%H:%M:%S'));
+														  });
+													}
+													
+
+													$scores.show();
+												}
+												else
+													$scores.hide();
+
+												
+											}
 								      	}
 							      }
 							    });

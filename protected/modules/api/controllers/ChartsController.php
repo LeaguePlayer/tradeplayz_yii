@@ -11,6 +11,9 @@ class ChartsController extends ApiController
 		// $url_to_api_charts =  "http://dev.tradeplayz.com/api/charts";
 		$url_to_api_charts =  "http://tpz.server.loc.192.168.88.23.xip.io/api/charts";
 
+
+		// var_dump();die();
+
 		$this->render("index", array(
 				'url_to_api_charts'=>$url_to_api_charts,
 			));
@@ -142,11 +145,81 @@ class ChartsController extends ApiController
 					);
 				
 			}
-			// var_dump($data);
-			// die();
 
-			//return
+
+
+			//work with modal
+			if(!is_null($this->user->active_participant->tournament))
+			{
+				Yii::import("application.commands.*");
+				$modal_data = array();
+				$tournament = $this->user->active_participant->tournament;
+				if($tournament->status == Tournaments::STATUS_PUBLISH)
+				{
+					$modal_data['show']=true;
+					//tournament not started
+					// die("tournament not started");
+				}
+				elseif( in_array($tournament->status, array(Tournaments::STATUS_PREPARATION, Tournaments::STATUS_RUNNING) ) )
+				{
+
+					if( $tournament->status == Tournaments::STATUS_RUNNING && ($tournament->paused == 0 || $tournament->paused == 1) ) // tour running or silince mode
+					{
+						$modal_data['show']=false;
+						// die('running or silince');
+					}
+					else
+					{
+
+				
+						$tour_begin_time = strtotime("+1 minute ".$tournament->dttm_begin); // это та минута, которая в холостую простаивает после начала турнира, т.к. подготовительная
+	            		$time_to_finish_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND) + ( ($tournament->level-1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
+
+						$modal_data['show']=true;
+						$modal_data['title']=Yii::t('main','at_start_round');
+						$modal_data['timer']=date('Y/m/d H:i:s',$time_to_finish_round_timestamp);
+						//preparation. we have info about enemy or freewin
+						if($tournament->level  ==  $this->user->active_participant->level) // i have enemies
+						{
+							$all_players = Participants::model()->findAll("id_tournament = :id_tournament and level = :level and cart = :cart", array(
+									':id_tournament'=>$this->user->active_participant->id_tournament,
+									':level'=>$this->user->active_participant->level,
+									':cart'=>$this->user->active_participant->cart,
+								));
+
+							$cnt = "";
+							foreach($all_players as $p)
+							{	
+								$cnt .= '<div class="player">
+											<img src="'.$p->user->getAvatar("icon").'">
+											<div class="player_name">'.$p->user->getFullName().'</div>
+										</div><div class="versus">VS.</div>';
+								
+							}
+							$modal_data['content'] = $cnt;
+							// die("i have enemies");
+						}
+						else
+						{
+							// i have free win or lost
+							if( $this->user->active_participant->status == Participants::STATUS_STILL_PLAY )
+							{
+								// i have freewin
+								$modal_data['content'] = "You have freewin";
+								// die("i have freewin");
+							}
+							// else
+							// 	die("i lost");
+						}
+					}
+					
+				}
+				$json->registerResponseObject('modal', $modal_data);
+			}
+			
+
 			$json->registerResponseObject('trades', $data);
+			
 			$json->returnJson();
 
 			// header('Access-Control-Allow-Origin: *');
