@@ -202,7 +202,9 @@ class ChartsController extends ApiController
 
 						if($tournament->paused == 2) // now break
 						{
+							$time_to_ready_next_round_timestamp = $tour_begin_time + ( (GameplayCommand::TIME_ROUND + GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS) + ( ($tournament->level-1) * (GameplayCommand::TIME_BREAK_BETWEEN_ROUNDS + GameplayCommand::TIME_ROUND) ) );
 							$modal_data['title']=Yii::t('main','now_break_round');
+							$modal_data['timer']=date('Y/m/d H:i:s',$time_to_ready_next_round_timestamp);
 							$got_level = $tournament->level + 1;
 						}
 						else $got_level = $tournament->level;
