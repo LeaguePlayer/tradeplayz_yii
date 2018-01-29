@@ -1,6 +1,9 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.0",
-        "textalk/websocket": "1.0.*"
+ #       "textalk/websocket": "1.0.*",
+#	"loeken/cryptocompare-api-php-wrapper": "dev-master",
+	"ytake/socketio-cli": "dev-master",
+        "ratchet/pawl": "^0.3.1"
     }
 }
