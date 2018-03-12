@@ -17,3 +17,5 @@ protected/yiic.bat
 protected/cron.php
 /upload
 /req
+/vendor
+
