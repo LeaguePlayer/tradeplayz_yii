@@ -244,6 +244,22 @@ class UsersController extends ApiController
 
 	}
 
+	public function actionSetTokenPush($new_token)
+	{
+		$json = new JsonModel;
+
+
+		$this->user->device->token_push = $new_token;
+
+		
+	
+
+
+		 $json->registerResponseObject('token', $this->user->device->update());
+		
+		 $json->returnJson();
+	}
+
 
 	public function accessRules()
 		{

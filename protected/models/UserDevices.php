@@ -7,6 +7,7 @@
     * @property integer $id
     * @property string $model_phone
     * @property string $devicetoken
+    * @property string $token_push
     * @property integer $id_user
     * @property string $id_os
     * @property integer $device_type
@@ -24,9 +25,9 @@ class UserDevices extends EActiveRecord
         return array(
             // array('id', 'required'),
             array('id, id_user, device_type', 'numerical', 'integerOnly'=>true),
-            array('model_phone, devicetoken, id_os', 'length', 'max'=>255),
+            array('model_phone, devicetoken, token_push, id_os', 'length', 'max'=>255),
             // The following rule is used by search().
-            array('id, model_phone, devicetoken, id_user, id_os, device_type', 'safe', 'on'=>'search'),
+            array('id, model_phone, devicetoken, token_push, id_user, id_os, device_type', 'safe', 'on'=>'search'),
         );
     }
 
@@ -47,6 +48,7 @@ class UserDevices extends EActiveRecord
             'id_user' => 'Id User',
             'id_os' => 'Id Os',
             'device_type' => 'Device Type',
+            'token_push' => 'Token Push',
         );
     }
 
@@ -87,11 +89,11 @@ class UserDevices extends EActiveRecord
 
     protected static function getTokensByType($type=false)
     {
-        $criteria = new CDbCriteria(array('select'=>'id, devicetoken', 'condition'=>'devicetoken is NOT NULL'));
-        $criteria->group = "devicetoken";
+        $criteria = new CDbCriteria(array('select'=>'id, token_push', 'condition'=>'token_push is NOT NULL'));
+        $criteria->group = "token_push";
         $is_counter = false;
 
-        $criteria->addCondition("devicetoken not in ('SIMULATOR_DEVICE_TOKEN', 'debug', 'null')");
+        $criteria->addCondition("token_push not in ('SIMULATOR_DEVICE_TOKEN', 'debug', 'null')");
 
         switch ($type) {
             case self::TYPE_TOKEN_IOS:

@@ -23,26 +23,26 @@ class SiteController extends FrontController
 		);
 	}
 
-	// public function actionTestNotification($type, $device_token)
-	// {
-	// 	$push = new PushModel;
-	// 	$push->message = "Это тестовое сообщение!1232";
-	// 	switch ($type) {
-	// 		case 'ios':
+	public function actionTestNotification($type, $device_token)
+	{
+		$push = new PushModel;
+		$push->message = "Это тестовое сообщение!1232";
+		switch ($type) {
+			case 'ios':
 
-	// 			$push->addIOsDevices( $device_token );
-	// 				$push->DEBUG_MODE == PushModel::DEBUG_OFF;
-	// 			var_dump($push->sendPushIOs());
-	// 			break;
+				$push->addIOsDevices( $device_token );
+					$push->DEBUG_MODE == PushModel::DEBUG_OFF;
+				var_dump($push->sendPushIOs());
+				break;
 			
-	// 		case 'android':
-	// 			 $push->addAndroidDevices( $device_token );
-	// 			 var_dump($push->sendPushAndroid());
-	// 			break;
+			case 'android':
+				 $push->addAndroidDevices( $device_token );
+				 var_dump($push->sendPushAndroid());
+				break;
 
 			
-	// 	}
-	// }
+		}
+	}
 
 	public function actionRecoveryPassword($active_key)
 	{

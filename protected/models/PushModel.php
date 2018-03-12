@@ -4,7 +4,7 @@ class PushModel
 {
 	//settings
 	protected $API_ACCESS_KEY_ANDROID = "AIzaSyBijtt8WejyozbHNr5tllGkRlpklRnpuLI";
-	protected $IOS_DEVELOPMENT_CERT = "push_dev_malloko.pem";
+	protected $IOS_DEVELOPMENT_CERT = "d_tpz_app.pem";
 	protected $IOS_PRODUCTION_CERT = "push_prod_malloko.pem";
 	// end settings
 
@@ -13,7 +13,7 @@ class PushModel
 	protected $dataPush = array();
 	protected $step = 1;
 
-	public $DEBUG_MODE = self::DEBUG_OFF;
+	public $DEBUG_MODE = self::DEBUG_ON;
 	public $message = "";
 
 	
@@ -159,6 +159,7 @@ class PushModel
 
 		
 // var_dump($payload);die();
+// var_dump($all_devices);die();
 	 
 		foreach($all_devices as $deviceToken) {
 			// var_dump($this->DEBUG_MODE);die();
